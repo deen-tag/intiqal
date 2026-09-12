@@ -154,18 +154,12 @@
   .footer-social a{ width:32px; height:32px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
   .footer-social svg{ width:15px; height:15px; }
 
+  /* La visibilité et la position du menu mobile (#mainNav) sont gérées
+     entièrement en JavaScript (voir <script> en bas de page), pour éviter
+     toute divergence de rendu entre navigateurs sur les media queries. */
   @media (max-width: 860px){
     .wrap{ padding:0 20px; }
-    nav.main-nav{
-      position:fixed; top:64px; right:0; bottom:0; left:0; width:100%; z-index:100;
-      background:var(--cream);
-      flex-direction:column; align-items:flex-start; padding:32px 24px;
-      gap:26px; transform:translateX(100%); transition:transform .25s ease;
-      border-top:1px solid var(--line);
-    }
-    nav.main-nav.open{ transform:translateX(0); }
     nav.main-nav .btn{ margin-top:8px; }
-    .nav-toggle{ display:block; }
     .hero-inner, .example-grid, .gift-grid{ grid-template-columns:1fr; }
     .hero{ padding:48px 0 64px; }
     .hero h1{ font-size:2.15rem; max-width:none; }
@@ -393,8 +387,57 @@
 <script>
   const navToggle = document.getElementById('navToggle');
   const mainNav = document.getElementById('mainNav');
-  navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
-  mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mainNav.classList.remove('open')));
+  const MOBILE_BREAKPOINT = 860;
+  let navOpen = false;
+
+  function isMobile(){ return window.innerWidth <= MOBILE_BREAKPOINT; }
+
+  function closeMobileNav(){
+    navOpen = false;
+    if(isMobile()){
+      mainNav.style.display = 'none';
+    }
+  }
+
+  function openMobileNav(){
+    navOpen = true;
+    Object.assign(mainNav.style, {
+      display: 'flex',
+      position: 'fixed',
+      top: '64px',
+      left: '0',
+      right: '0',
+      bottom: '0',
+      width: '100%',
+      zIndex: '9999',
+      background: '#F8F5EF',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      padding: '32px 24px',
+      gap: '26px',
+      borderTop: '1px solid rgba(61,57,52,0.12)',
+      overflowY: 'auto'
+    });
+  }
+
+  function applyLayout(){
+    if(isMobile()){
+      navToggle.style.display = 'flex';
+      if(navOpen){ openMobileNav(); } else { closeMobileNav(); }
+    } else {
+      navToggle.style.display = 'none';
+      navOpen = false;
+      // reset any inline mobile styles so desktop CSS takes over
+      mainNav.removeAttribute('style');
+    }
+  }
+
+  navToggle.addEventListener('click', () => {
+    navOpen ? closeMobileNav() : openMobileNav();
+  });
+  mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+  window.addEventListener('resize', applyLayout);
+  applyLayout();
 
   document.querySelectorAll('.faq-item').forEach(item => {
     const btn = item.querySelector('button');
