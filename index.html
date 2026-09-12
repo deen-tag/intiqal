@@ -157,7 +157,8 @@
   @media (max-width: 860px){
     .wrap{ padding:0 20px; }
     nav.main-nav{
-      position:fixed; inset:64px 0 0 0; background:var(--cream);
+      position:fixed; top:64px; right:0; bottom:0; left:0; width:100%; z-index:100;
+      background:var(--cream);
       flex-direction:column; align-items:flex-start; padding:32px 24px;
       gap:26px; transform:translateX(100%); transition:transform .25s ease;
       border-top:1px solid var(--line);
