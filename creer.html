@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créer mon livre — Souvenirs à partager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F8F5EF; --ink:#3D3934; --sage:#A8B5A0; --sage-deep:#7C8B73;
+    --terracotta:#C98268; --terracotta-deep:#B36B4F; --card:#FFFDF9;
+    --line: rgba(61,57,52,0.12);
+    --serif:'Cormorant Garamond', serif; --sans:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:var(--sans); background:var(--cream); color:var(--ink); min-height:100vh; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:500; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; }
+  a{ color:inherit; text-decoration:none; }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:999px; font-size:0.95rem; font-weight:500; transition:transform .15s ease, background .15s ease; }
+  .btn-primary{ background:var(--terracotta); color:var(--card); }
+  .btn-primary:hover{ background:var(--terracotta-deep); }
+  .btn-primary:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn-outline{ background:transparent; border:1px solid var(--line); color:var(--ink); }
+  .btn-outline:hover{ border-color:var(--ink); }
+  .btn-block{ width:100%; }
+
+  .flow-header{ position:sticky; top:0; background:rgba(248,245,239,0.95); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); z-index:10; }
+  .flow-header-inner{ max-width:640px; margin:0 auto; padding:18px 24px 16px; }
+  .flow-top-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .back-link{ display:flex; align-items:center; gap:6px; font-size:0.92rem; opacity:0.75; }
+  .step-count{ font-size:0.85rem; opacity:0.6; }
+  .progress-track{ height:4px; background:var(--line); border-radius:2px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--sage); border-radius:2px; transition:width .3s ease; width:20%; }
+
+  main{ max-width:640px; margin:0 auto; padding:44px 24px 80px; }
+  .step-panel{ display:none; }
+  .step-panel.active{ display:block; animation:fadeIn .25s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .step-panel h2{ font-size:1.7rem; margin-bottom:8px; }
+  .step-hint{ font-size:0.92rem; opacity:0.7; margin-bottom:28px; max-width:48ch; }
+
+  label.field-label{ display:block; font-size:0.88rem; opacity:0.75; margin-bottom:8px; }
+  input[type="text"], textarea{
+    width:100%; font-family:inherit; font-size:1rem; color:var(--ink);
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px;
+  }
+  input[type="text"]:focus, textarea:focus{ outline:none; border-color:var(--sage-deep); }
+  .field-group{ margin-bottom:24px; }
+
+  .radio-list{ display:flex; flex-direction:column; gap:10px; }
+  .radio-option{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:var(--card); }
+  .radio-option input{ accent-color:var(--terracotta); width:18px; height:18px; }
+  .radio-option label{ font-size:0.98rem; cursor:pointer; flex:1; }
+
+  .question-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; }
+  .question-card textarea{ min-height:110px; resize:vertical; }
+  .char-count{ text-align:right; font-size:0.78rem; opacity:0.5; margin-top:6px; }
+  .hint-box{ margin-top:16px; background:#F3EAD9; border-radius:10px; padding:14px 16px; font-size:0.86rem; display:flex; gap:10px; align-items:flex-start; }
+  .question-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:24px; }
+  .question-progress{ display:flex; gap:6px; margin-bottom:22px; }
+  .qdot{ width:8px; height:8px; border-radius:50%; background:var(--line); }
+  .qdot.done{ background:var(--sage); }
+  .qdot.current{ background:var(--terracotta); }
+
+  .photo-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:22px; }
+  .photo-thumb{ position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; background:#EADFC5; }
+  .photo-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .photo-thumb button{ position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%; background:rgba(61,57,52,0.7); color:#fff; font-size:0.8rem; display:flex; align-items:center; justify-content:center; }
+  .photo-add{ aspect-ratio:1; border:1.5px dashed var(--line); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; font-size:0.78rem; color:var(--sage-deep); background:var(--card); cursor:pointer; }
+  .photo-count-note{ font-size:0.82rem; opacity:0.6; margin-bottom:16px; }
+
+  .style-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .style-card{ border:2px solid var(--line); border-radius:12px; padding:16px; cursor:pointer; background:var(--card); position:relative; }
+  .style-card.selected{ border-color:var(--terracotta); }
+  .style-card .swatch{ height:70px; border-radius:8px; margin-bottom:12px; }
+  .style-card p{ font-size:0.92rem; font-weight:500; }
+  .style-card .check{ position:absolute; top:12px; right:12px; width:20px; height:20px; border-radius:50%; background:var(--terracotta); color:#fff; display:none; align-items:center; justify-content:center; font-size:0.7rem; }
+  .style-card.selected .check{ display:flex; }
+  .swatch-1{ background:linear-gradient(135deg,#A8B5A0,#7C8B73); }
+  .swatch-2{ background:linear-gradient(135deg,#EADFC5,#C9AE84); }
+  .swatch-3{ background:linear-gradient(135deg,#F1C9C0,#DE9C8E); }
+  .swatch-4{ background:linear-gradient(135deg,#CBD8E4,#9FB4C9); }
+
+  .preview-book{ background:var(--card); border-radius:14px; border:1px solid var(--line); padding:24px; margin-bottom:20px; }
+  .preview-book h4{ font-size:1.1rem; margin-bottom:10px; }
+  .preview-book p{ font-size:0.88rem; opacity:0.75; line-height:1.6; }
+  .edit-note{ display:flex; gap:10px; align-items:flex-start; background:#EFF1EA; border-radius:10px; padding:14px 16px; font-size:0.85rem; margin-bottom:24px; }
+
+  .order-summary{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:20px; }
+  .order-row{ display:flex; justify-content:space-between; font-size:0.92rem; padding:8px 0; }
+  .order-row.total{ border-top:1px solid var(--line); margin-top:6px; padding-top:14px; font-weight:600; font-size:1.05rem; }
+  .qty-control{ display:flex; align-items:center; gap:14px; }
+  .qty-control button{ width:28px; height:28px; border:1px solid var(--line); border-radius:50%; }
+
+  .confirm-panel{ text-align:center; padding-top:20px; }
+  .confirm-check{ width:64px; height:64px; border-radius:50%; background:var(--sage); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:1.6rem; }
+  .confirm-panel p{ opacity:0.75; max-width:40ch; margin:14px auto 0; font-size:0.95rem; }
+  .confirm-quote{ margin-top:32px; font-family:var(--serif); font-style:italic; color:var(--sage-deep); }
+
+  @media (max-width:520px){
+    .style-grid{ grid-template-columns:1fr 1fr; }
+    main{ padding:32px 18px 64px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="flow-header">
+  <div class="flow-header-inner">
+    <div class="flow-top-row">
+      <a href="index.html" class="back-link">← Créer mon livre</a>
+      <span class="step-count" id="stepCount">1 sur 5</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<main>
+
+  <!-- Étape 1 -->
+  <section class="step-panel active" data-step="1">
+    <h2>Pour qui créez-vous ce livre ?</h2>
+    <p class="step-hint">Ces informations nous aident à personnaliser chaque page du livre.</p>
+    <div class="field-group">
+      <label class="field-label" for="firstName">Prénom de la personne</label>
+      <input type="text" id="firstName" placeholder="Madeleine">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Quel est votre lien ?</label>
+      <div class="radio-list">
+        <div class="radio-option"><input type="radio" name="lien" id="lien1" value="Ma mère" checked><label for="lien1">Ma mère</label></div>
+        <div class="radio-option"><input type="radio" name="lien" id="lien2" value="Mon père"><label for="lien2">Mon père</label></div>
+        <div class="radio-option"><input type="radio" name="lien" id="lien3" value="Mon grand-parent"><label for="lien3">Mon grand-parent</label></div>
+        <div class="radio-option"><input type="radio" name="lien" id="lien4" value="Mon conjoint"><label for="lien4">Mon conjoint</label></div>
+        <div class="radio-option"><input type="radio" name="lien" id="lien5" value="Autre"><label for="lien5">Autre</label></div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="goToStep(2)">Continuer →</button>
+  </section>
+
+  <!-- Étape 2 : questions -->
+  <section class="step-panel" data-step="2">
+    <h2 id="qTitle">Quel était son métier ?</h2>
+    <p class="step-hint">Vous pouvez répondre avec quelques mots, une phrase ou une petite anecdote.</p>
+    <div class="question-progress" id="qDots"></div>
+    <div class="question-card">
+      <textarea id="qAnswer" maxlength="500" placeholder="Écrivez ici…" oninput="updateCharCount()"></textarea>
+      <div class="char-count"><span id="charCount">0</span>/500</div>
+      <div class="hint-box">💡 <span>Une petite anecdote rend souvent le souvenir encore plus vivant.</span></div>
+    </div>
+    <div class="question-actions">
+      <button class="btn btn-outline" onclick="nextQuestion(true)">Passer cette question</button>
+      <button class="btn btn-primary" id="qNextBtn" onclick="nextQuestion(false)">Question suivante →</button>
+    </div>
+  </section>
+
+  <!-- Étape 3 : photos -->
+  <section class="step-panel" data-step="3">
+    <h2>Ajoutez vos photos</h2>
+    <p class="step-hint">Sélectionnez entre 3 et 10 photos. Vous pourrez ajouter des légendes si vous le souhaitez.</p>
+    <p class="photo-count-note" id="photoCountNote">0 photo ajoutée</p>
+    <div class="photo-grid" id="photoGrid">
+      <div class="photo-add" id="photoAdd">
+        <span style="font-size:1.4rem;">＋</span>
+        <span>Ajouter une photo</span>
+      </div>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" multiple style="display:none;">
+    <button class="btn btn-primary btn-block" onclick="goToStep(4)">Suivant →</button>
+  </section>
+
+  <!-- Étape 4 : style -->
+  <section class="step-panel" data-step="4">
+    <h2>Choisissez le style de votre livre</h2>
+    <p class="step-hint">4 styles sont disponibles pour créer un livre qui vous ressemble.</p>
+    <div class="style-grid" id="styleGrid">
+      <div class="style-card selected" data-style="Doux & naturel"><div class="swatch swatch-1"></div><p>Doux &amp; naturel</p><div class="check">✓</div></div>
+      <div class="style-card" data-style="Élégant & intemporel"><div class="swatch swatch-2"></div><p>Élégant &amp; intemporel</p><div class="check">✓</div></div>
+      <div class="style-card" data-style="Tendre & fleuri"><div class="swatch swatch-3"></div><p>Tendre &amp; fleuri</p><div class="check">✓</div></div>
+      <div class="style-card" data-style="Photo & souvenirs"><div class="swatch swatch-4"></div><p>Photo &amp; souvenirs</p><div class="check">✓</div></div>
+    </div>
+    <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="goToStep(5)">Suivant →</button>
+  </section>
+
+  <!-- Étape 5 : aperçu + commande -->
+  <section class="step-panel" data-step="5">
+    <h2>Aperçu de votre livre</h2>
+    <div class="preview-book">
+      <h4 id="previewTitle">Les souvenirs de Madeleine</h4>
+      <p id="previewStyle">Style : Doux & naturel — <span id="previewPhotoCount">0</span> photo(s) ajoutée(s)</p>
+    </div>
+    <div class="edit-note">✅ <span>Vous pouvez encore modifier vos réponses, vos photos ou le style avant de commander.</span></div>
+
+    <div class="order-summary">
+      <div class="order-row"><span>Le petit livre souvenir</span><span>29,00 €</span></div>
+      <div class="order-row" style="opacity:0.7;"><span>15 pages · 10 questions · style au choix</span></div>
+      <div class="order-row"><span>Exemplaires</span>
+        <span class="qty-control">
+          <button onclick="changeQty(-1)">−</button>
+          <span id="qtyVal">1</span>
+          <button onclick="changeQty(1)">+</button>
+        </span>
+      </div>
+      <div class="order-row"><span>Livraison (France métropolitaine)</span><span>4,90 €</span></div>
+      <div class="order-row total"><span>Total</span><span id="orderTotal">33,90 €</span></div>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="goToStep(6)">Commander mon livre →</button>
+  </section>
+
+  <!-- Étape 6 : confirmation -->
+  <section class="step-panel" data-step="6">
+    <div class="confirm-panel">
+      <div class="confirm-check">✓</div>
+      <h2>Votre livre est en préparation !</h2>
+      <p>Merci pour votre confiance. Vous allez recevoir un email de confirmation avec le récapitulatif de votre commande.</p>
+      <a href="index.html" class="btn btn-outline" style="margin-top:24px;">Retour à l'accueil</a>
+      <p class="confirm-quote">Les plus beaux souvenirs ne s'oublient jamais. ♡</p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const totalSteps = 5; // la confirmation (6) n'entre pas dans la barre de progression
+  const questions = [
+    "Quel était son métier ?",
+    "Où a-t-elle grandi ?",
+    "Quelle est la rencontre qui a marqué sa vie ?",
+    "Quelle est sa plus grande passion ?",
+    "Quel souvenir de vacances garde-t-elle ?",
+    "Quel plat ou quelle recette aime-t-elle particulièrement ?",
+    "Qui est une personne qui compte beaucoup pour elle ?",
+    "Quelle est une anecdote amusante à son sujet ?",
+    "Qu'aimez-vous le plus chez elle ?",
+    "Y a-t-il une phrase ou une expression qu'elle dit souvent ?"
+  ];
+  let currentQuestion = 0;
+  let photos = [];
+  let qty = 1;
+  let selectedStyle = "Doux & naturel";
+
+  function renderDots(){
+    const dots = document.getElementById('qDots');
+    dots.innerHTML = '';
+    questions.forEach((_, i) => {
+      const d = document.createElement('span');
+      d.className = 'qdot' + (i < currentQuestion ? ' done' : i === currentQuestion ? ' current' : '');
+      dots.appendChild(d);
+    });
+  }
+
+  function loadQuestion(){
+    document.getElementById('qTitle').textContent = questions[currentQuestion];
+    document.getElementById('qAnswer').value = '';
+    updateCharCount();
+    document.getElementById('qNextBtn').textContent = currentQuestion === questions.length - 1 ? 'Continuer →' : 'Question suivante →';
+    renderDots();
+  }
+
+  function updateCharCount(){
+    document.getElementById('charCount').textContent = document.getElementById('qAnswer').value.length;
+  }
+
+  function nextQuestion(skip){
+    if(currentQuestion < questions.length - 1){
+      currentQuestion++;
+      loadQuestion();
+    } else {
+      goToStep(3);
+    }
+  }
+
+  function goToStep(n){
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.step-panel[data-step="'+n+'"]').classList.add('active');
+    const shown = Math.min(n, totalSteps);
+    document.getElementById('stepCount').textContent = shown + ' sur ' + totalSteps;
+    document.getElementById('progressFill').style.width = (shown / totalSteps * 100) + '%';
+    if(n === 2){ currentQuestion = 0; loadQuestion(); }
+    if(n === 5){ updatePreview(); }
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // Photos
+  const photoAdd = document.getElementById('photoAdd');
+  const photoInput = document.getElementById('photoInput');
+  const photoGrid = document.getElementById('photoGrid');
+  photoAdd.addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', (e) => {
+    Array.from(e.target.files).forEach(file => {
+      if(photos.length >= 10) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        photos.push(ev.target.result);
+        renderPhotos();
+      };
+      reader.readAsDataURL(file);
+    });
+    photoInput.value = '';
+  });
+
+  function renderPhotos(){
+    photoGrid.innerHTML = '';
+    photos.forEach((src, i) => {
+      const div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.innerHTML = '<img src="'+src+'"><button onclick="removePhoto('+i+')">✕</button>';
+      photoGrid.appendChild(div);
+    });
+    if(photos.length < 10){
+      photoGrid.appendChild(photoAdd);
+    }
+    document.getElementById('photoCountNote').textContent =
+      photos.length + (photos.length <= 1 ? ' photo ajoutée' : ' photos ajoutées');
+  }
+
+  function removePhoto(i){
+    photos.splice(i,1);
+    renderPhotos();
+  }
+
+  // Style
+  document.querySelectorAll('.style-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedStyle = card.dataset.style;
+    });
+  });
+
+  // Order
+  function changeQty(delta){
+    qty = Math.max(1, qty + delta);
+    document.getElementById('qtyVal').textContent = qty;
+    updateOrderTotal();
+  }
+  function updateOrderTotal(){
+    const total = (29 * qty + 4.9).toFixed(2).replace('.', ',') + ' €';
+    document.getElementById('orderTotal').textContent = total;
+  }
+
+  function updatePreview(){
+    const name = document.getElementById('firstName').value.trim() || 'votre proche';
+    document.getElementById('previewTitle').textContent = 'Les souvenirs de ' + name;
+    document.getElementById('previewStyle').innerHTML = 'Style : ' + selectedStyle + ' — <span>' + photos.length + '</span> photo(s) ajoutée(s)';
+  }
+
+  renderPhotos();
+</script>
+
+</body>
+</html>
