@@ -1,358 +1,88 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Créez votre livre souvenir personnalisé.">
 <title>Créer mon livre — Souvenirs à partager</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --cream:#F8F5EF; --ink:#3D3934; --sage:#A8B5A0; --sage-deep:#7C8B73;
-    --terracotta:#C98268; --terracotta-deep:#B36B4F; --card:#FFFDF9;
-    --line: rgba(61,57,52,0.12);
-    --serif:'Cormorant Garamond', serif; --sans:'Inter', sans-serif;
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  body{ font-family:var(--sans); background:var(--cream); color:var(--ink); min-height:100vh; }
-  h1,h2,h3{ font-family:var(--serif); font-weight:500; }
-  button{ font-family:inherit; cursor:pointer; border:none; background:none; }
-  a{ color:inherit; text-decoration:none; }
-
-  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 26px; border-radius:999px; font-size:0.95rem; font-weight:500; transition:transform .15s ease, background .15s ease; }
-  .btn-primary{ background:var(--terracotta); color:var(--card); }
-  .btn-primary:hover{ background:var(--terracotta-deep); }
-  .btn-primary:disabled{ opacity:0.45; cursor:not-allowed; }
-  .btn-outline{ background:transparent; border:1px solid var(--line); color:var(--ink); }
-  .btn-outline:hover{ border-color:var(--ink); }
-  .btn-block{ width:100%; }
-
-  .flow-header{ position:sticky; top:0; background:rgba(248,245,239,0.95); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); z-index:10; }
-  .flow-header-inner{ max-width:640px; margin:0 auto; padding:18px 24px 16px; }
-  .flow-top-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .back-link{ display:flex; align-items:center; gap:6px; font-size:0.92rem; opacity:0.75; }
-  .step-count{ font-size:0.85rem; opacity:0.6; }
-  .progress-track{ height:4px; background:var(--line); border-radius:2px; overflow:hidden; }
-  .progress-fill{ height:100%; background:var(--sage); border-radius:2px; transition:width .3s ease; width:20%; }
-
-  main{ max-width:640px; margin:0 auto; padding:44px 24px 80px; }
-  .step-panel{ display:none; }
-  .step-panel.active{ display:block; animation:fadeIn .25s ease; }
-  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
-
-  .step-panel h2{ font-size:1.7rem; margin-bottom:8px; }
-  .step-hint{ font-size:0.92rem; opacity:0.7; margin-bottom:28px; max-width:48ch; }
-
-  label.field-label{ display:block; font-size:0.88rem; opacity:0.75; margin-bottom:8px; }
-  input[type="text"], textarea{
-    width:100%; font-family:inherit; font-size:1rem; color:var(--ink);
-    background:var(--card); border:1px solid var(--line); border-radius:10px;
-    padding:14px 16px;
-  }
-  input[type="text"]:focus, textarea:focus{ outline:none; border-color:var(--sage-deep); }
-  .field-group{ margin-bottom:24px; }
-
-  .radio-list{ display:flex; flex-direction:column; gap:10px; }
-  .radio-option{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:var(--card); }
-  .radio-option input{ accent-color:var(--terracotta); width:18px; height:18px; }
-  .radio-option label{ font-size:0.98rem; cursor:pointer; flex:1; }
-
-  .question-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; }
-  .question-card textarea{ min-height:110px; resize:vertical; }
-  .char-count{ text-align:right; font-size:0.78rem; opacity:0.5; margin-top:6px; }
-  .hint-box{ margin-top:16px; background:#F3EAD9; border-radius:10px; padding:14px 16px; font-size:0.86rem; display:flex; gap:10px; align-items:flex-start; }
-  .question-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:24px; }
-  .question-progress{ display:flex; gap:6px; margin-bottom:22px; }
-  .qdot{ width:8px; height:8px; border-radius:50%; background:var(--line); }
-  .qdot.done{ background:var(--sage); }
-  .qdot.current{ background:var(--terracotta); }
-
-  .photo-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:22px; }
-  .photo-thumb{ position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; background:#EADFC5; }
-  .photo-thumb img{ width:100%; height:100%; object-fit:cover; }
-  .photo-thumb button{ position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:50%; background:rgba(61,57,52,0.7); color:#fff; font-size:0.8rem; display:flex; align-items:center; justify-content:center; }
-  .photo-add{ aspect-ratio:1; border:1.5px dashed var(--line); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; font-size:0.78rem; color:var(--sage-deep); background:var(--card); cursor:pointer; }
-  .photo-count-note{ font-size:0.82rem; opacity:0.6; margin-bottom:16px; }
-
-  .style-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  .style-card{ border:2px solid var(--line); border-radius:12px; padding:16px; cursor:pointer; background:var(--card); position:relative; }
-  .style-card.selected{ border-color:var(--terracotta); }
-  .style-card .swatch{ height:70px; border-radius:8px; margin-bottom:12px; }
-  .style-card p{ font-size:0.92rem; font-weight:500; }
-  .style-card .check{ position:absolute; top:12px; right:12px; width:20px; height:20px; border-radius:50%; background:var(--terracotta); color:#fff; display:none; align-items:center; justify-content:center; font-size:0.7rem; }
-  .style-card.selected .check{ display:flex; }
-  .swatch-1{ background:linear-gradient(135deg,#A8B5A0,#7C8B73); }
-  .swatch-2{ background:linear-gradient(135deg,#EADFC5,#C9AE84); }
-  .swatch-3{ background:linear-gradient(135deg,#F1C9C0,#DE9C8E); }
-  .swatch-4{ background:linear-gradient(135deg,#CBD8E4,#9FB4C9); }
-
-  .preview-book{ background:var(--card); border-radius:14px; border:1px solid var(--line); padding:24px; margin-bottom:20px; }
-  .preview-book h4{ font-size:1.1rem; margin-bottom:10px; }
-  .preview-book p{ font-size:0.88rem; opacity:0.75; line-height:1.6; }
-  .edit-note{ display:flex; gap:10px; align-items:flex-start; background:#EFF1EA; border-radius:10px; padding:14px 16px; font-size:0.85rem; margin-bottom:24px; }
-
-  .order-summary{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:20px; }
-  .order-row{ display:flex; justify-content:space-between; font-size:0.92rem; padding:8px 0; }
-  .order-row.total{ border-top:1px solid var(--line); margin-top:6px; padding-top:14px; font-weight:600; font-size:1.05rem; }
-  .qty-control{ display:flex; align-items:center; gap:14px; }
-  .qty-control button{ width:28px; height:28px; border:1px solid var(--line); border-radius:50%; }
-
-  .confirm-panel{ text-align:center; padding-top:20px; }
-  .confirm-check{ width:64px; height:64px; border-radius:50%; background:var(--sage); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:1.6rem; }
-  .confirm-panel p{ opacity:0.75; max-width:40ch; margin:14px auto 0; font-size:0.95rem; }
-  .confirm-quote{ margin-top:32px; font-family:var(--serif); font-style:italic; color:var(--sage-deep); }
-
-  @media (max-width:520px){
-    .style-grid{ grid-template-columns:1fr 1fr; }
-    main{ padding:32px 18px 64px; }
-  }
+:root{--paper:#fbf8f2;--card:#fffdf9;--ink:#332f2b;--muted:#746d65;--sage:#aab7a2;--sage2:#71806b;--rose:#c98268;--rose2:#ad654c;--line:rgba(51,47,43,.12);--sand:#f1e8d9;--serif:"Cormorant Garamond",serif;--sans:"DM Sans",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5}button,input,textarea{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.top{position:sticky;top:0;z-index:20;background:rgba(251,248,242,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.top-in{width:min(760px,calc(100% - 32px));margin:auto;padding:16px 0}.row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.back{font-size:.85rem;color:var(--muted)}.stepcount{font-size:.78rem;color:var(--muted)}.track{height:5px;border-radius:9px;background:var(--line);overflow:hidden}.fill{height:100%;background:var(--rose);width:20%;transition:.3s}.wrap{width:min(700px,calc(100% - 32px));margin:auto;padding:58px 0 100px}.panel{display:none}.panel.active{display:block;animation:up .25s ease}@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.08}h2{font-size:clamp(2rem,5vw,3rem);margin:0 0 9px}.intro{color:var(--muted);max-width:55ch;margin:0 0 30px}.field{margin:0 0 22px}.label{display:block;font-size:.8rem;font-weight:700;margin:0 0 8px;color:var(--muted)}input,textarea{width:100%;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:15px;color:var(--ink);outline:none}input:focus,textarea:focus{border-color:var(--sage2);box-shadow:0 0 0 4px rgba(113,128,107,.08)}.choices{display:grid;gap:10px}.choice{position:relative;display:flex;align-items:center;gap:11px;padding:15px 16px;border:1px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer}.choice:has(input:checked){border-color:var(--rose);background:#fff9f5}.choice input{width:auto;accent-color:var(--rose)}.actions{display:flex;justify-content:space-between;gap:12px;margin-top:28px}.btn{border:0;border-radius:999px;padding:14px 22px;font-weight:700}.primary{background:var(--rose);color:#fff}.primary:hover{background:var(--rose2)}.outline{background:transparent;border:1px solid var(--line);color:var(--ink)}.primary:disabled{opacity:.4;cursor:not-allowed}.question-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.dots{display:flex;gap:5px}.dot{width:7px;height:7px;border-radius:50%;background:var(--line)}.dot.done{background:var(--sage)}.dot.current{background:var(--rose)}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}.card textarea{min-height:145px;resize:vertical}.hint{margin-top:13px;padding:13px 14px;background:var(--sand);border-radius:10px;color:#665d53;font-size:.82rem}.counter{text-align:right;color:var(--muted);font-size:.72rem;margin-top:5px}.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.thumb,.add{aspect-ratio:1;border-radius:12px;overflow:hidden}.thumb{position:relative;background:#e6dccb}.thumb img{width:100%;height:100%;object-fit:cover}.remove{position:absolute;top:7px;right:7px;width:25px;height:25px;border-radius:50%;background:rgba(51,47,43,.75);color:#fff;border:0}.add{border:1.5px dashed #b8afa4;background:transparent;color:var(--sage2);display:grid;place-items:center;text-align:center;cursor:pointer;font-size:.8rem;padding:12px}.photo-note{font-size:.78rem;color:var(--muted);margin:0 0 16px}.styles{display:grid;grid-template-columns:1fr 1fr;gap:13px}.style{border:2px solid var(--line);border-radius:14px;padding:10px;background:var(--card);cursor:pointer}.style.selected{border-color:var(--rose)}.swatch{height:105px;border-radius:9px;margin-bottom:10px;position:relative;overflow:hidden}.swatch:after{content:"Les souvenirs";position:absolute;left:14px;bottom:12px;font-family:var(--serif);font-size:1.15rem}.s1{background:linear-gradient(145deg,#aab7a2,#71806b);color:#fff}.s2{background:linear-gradient(145deg,#eee5d6,#c9ae84)}.s3{background:linear-gradient(145deg,#f2d0c8,#d99a8d)}.s4{background:linear-gradient(145deg,#d7e0e8,#9eb4c8)}.style p{margin:0 4px 3px;font-size:.82rem;font-weight:700}.preview{display:grid;grid-template-columns:170px 1fr;gap:20px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}.cover{height:215px;border-radius:6px;background:linear-gradient(145deg,#aab7a2,#71806b);color:#fff;display:grid;place-items:center;text-align:center;font-family:var(--serif);font-size:1.5rem;padding:20px}.preview-info h3{font-size:1.6rem;margin:0 0 8px}.muted{color:var(--muted);font-size:.84rem}.summary{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}.sumrow{display:flex;justify-content:space-between;padding:8px 0;font-size:.88rem}.total{border-top:1px solid var(--line);margin-top:7px;padding-top:15px;font-weight:700;font-size:1rem}.qty{display:flex;gap:12px;align-items:center}.qty button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:transparent}.assure{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.assure div{background:#edf0e9;border-radius:10px;padding:11px;text-align:center;font-size:.7rem;color:var(--sage2)}.success{text-align:center;padding-top:30px}.check{width:70px;height:70px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-size:1.6rem;margin:0 auto 22px}.success h2{margin-bottom:10px}.success p{color:var(--muted);max-width:48ch;margin:10px auto}.small{font-size:.74rem;color:var(--muted);margin-top:18px;text-align:center}
+@media(max-width:560px){.wrap{padding-top:40px}.photos{grid-template-columns:repeat(3,1fr)}.preview{grid-template-columns:1fr}.cover{height:190px}.assure{grid-template-columns:1fr}.actions .btn{padding:13px 15px;font-size:.85rem}}
 </style>
 </head>
 <body>
+<div class="top"><div class="top-in"><div class="row"><a class="back" href="index.html">← Retour</a><span class="stepcount" id="stepCount">1 sur 5</span></div><div class="track"><div class="fill" id="fill"></div></div></div></div>
+<main class="wrap">
+<section class="panel active" data-step="1">
+  <h2>Commençons par la personne qui compte pour vous.</h2><p class="intro">Son prénom donnera le fil rouge du livre. Vous pourrez tout modifier avant de commander.</p>
+  <div class="field"><label class="label" for="name">Son prénom</label><input id="name" type="text" placeholder="Madeleine" autocomplete="given-name"></div>
+  <div class="field"><span class="label">Quel est votre lien ?</span><div class="choices">
+    <label class="choice"><input type="radio" name="relation" value="Ma mère" checked> Ma mère</label>
+    <label class="choice"><input type="radio" name="relation" value="Mon père"> Mon père</label>
+    <label class="choice"><input type="radio" name="relation" value="Ma grand-mère"> Ma grand-mère</label>
+    <label class="choice"><input type="radio" name="relation" value="Mon grand-père"> Mon grand-père</label>
+    <label class="choice"><input type="radio" name="relation" value="Autre"> Autre</label>
+  </div></div>
+  <div class="actions"><span></span><button class="btn primary" id="startBtn">Continuer →</button></div>
+</section>
 
-<div class="flow-header">
-  <div class="flow-header-inner">
-    <div class="flow-top-row">
-      <a href="index.html" class="back-link">← Créer mon livre</a>
-      <span class="step-count" id="stepCount">1 sur 5</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<section class="panel" data-step="2">
+  <h2>Faisons remonter les souvenirs.</h2><p class="intro">Une phrase suffit. Une anecdote, un détail ou une expression rendent le récit encore plus vivant.</p>
+  <div class="question-meta"><div class="dots" id="dots"></div><span class="muted" id="qnum">1 / 10</span></div>
+  <div class="card"><h3 id="qtitle" style="font-size:1.45rem;margin-bottom:15px"></h3><textarea id="answer" maxlength="500" placeholder="Écrivez comme vous parleriez d'elle à quelqu'un que vous aimez…"></textarea><div class="counter"><span id="counter">0</span>/500</div><div class="hint">💡 Ne cherchez pas la phrase parfaite. Les détails simples sont souvent les plus précieux.</div></div>
+  <div class="actions"><button class="btn outline" id="skip">Passer</button><button class="btn primary" id="nextQ">Question suivante →</button></div>
+</section>
+
+<section class="panel" data-step="3">
+  <h2>Ajoutez les images qui racontent son histoire.</h2><p class="intro">Choisissez 3 à 10 photos. Elles restent dans votre navigateur pendant cette étape.</p>
+  <p class="photo-note" id="photoNote">0 photo · 3 minimum</p><div class="photos" id="photos"></div><input id="file" type="file" accept="image/*" multiple hidden>
+  <div class="actions"><button class="btn outline" onclick="go(2)">← Retour</button><button class="btn primary" id="photoNext" disabled>Continuer →</button></div>
+</section>
+
+<section class="panel" data-step="4">
+  <h2>Choisissez l'univers de votre livre.</h2><p class="intro">Le contenu reste le même. Le style change l'atmosphère de la couverture et des pages.</p>
+  <div class="styles" id="styles">
+    <div class="style selected" data-style="Doux & naturel"><div class="swatch s1"></div><p>Doux & naturel</p></div>
+    <div class="style" data-style="Élégant & intemporel"><div class="swatch s2"></div><p>Élégant & intemporel</p></div>
+    <div class="style" data-style="Tendre & fleuri"><div class="swatch s3"></div><p>Tendre & fleuri</p></div>
+    <div class="style" data-style="Photo & souvenirs"><div class="swatch s4"></div><p>Photo & souvenirs</p></div>
   </div>
-</div>
+  <div class="actions"><button class="btn outline" onclick="go(3)">← Retour</button><button class="btn primary" onclick="go(5)">Voir mon livre →</button></div>
+</section>
 
-<main>
+<section class="panel" data-step="5">
+  <h2>Votre histoire prend forme.</h2><p class="intro">Relisez le résumé avant de passer à la commande.</p>
+  <div class="preview"><div class="cover" id="cover">Les souvenirs<br>de Madeleine</div><div class="preview-info"><h3 id="previewName">Les souvenirs de Madeleine</h3><p class="muted" id="previewMeta">Doux & naturel · 10 questions · 3 photos</p><p class="muted" style="margin-top:15px">15 pages · livre personnalisé · exemplaires modifiables avant commande.</p></div></div>
+  <div class="summary"><div class="sumrow"><span>Le petit livre souvenir</span><span>29,00 €</span></div><div class="sumrow"><span>Exemplaires</span><span class="qty"><button id="minus">−</button><b id="qty">1</b><button id="plus">+</button></span></div><div class="sumrow"><span>Livraison · France métropolitaine</span><span>4,90 €</span></div><div class="sumrow total"><span>Total</span><span id="total">33,90 €</span></div></div>
+  <div class="assure"><div>🔒 Photos privées</div><div>✏️ Modifiable</div><div>📦 Livraison France</div></div>
+  <div class="actions"><button class="btn outline" onclick="go(4)">← Modifier</button><button class="btn primary" id="order">Commander →</button></div>
+  <p class="small">Prototype : le bouton commande ci-dessus simule actuellement la confirmation. Connectez votre prestataire de paiement avant mise en production.</p>
+</section>
 
-  <!-- Étape 1 -->
-  <section class="step-panel active" data-step="1">
-    <h2>Pour qui créez-vous ce livre ?</h2>
-    <p class="step-hint">Ces informations nous aident à personnaliser chaque page du livre.</p>
-    <div class="field-group">
-      <label class="field-label" for="firstName">Prénom de la personne</label>
-      <input type="text" id="firstName" placeholder="Madeleine">
-    </div>
-    <div class="field-group">
-      <label class="field-label">Quel est votre lien ?</label>
-      <div class="radio-list">
-        <div class="radio-option"><input type="radio" name="lien" id="lien1" value="Ma mère" checked><label for="lien1">Ma mère</label></div>
-        <div class="radio-option"><input type="radio" name="lien" id="lien2" value="Mon père"><label for="lien2">Mon père</label></div>
-        <div class="radio-option"><input type="radio" name="lien" id="lien3" value="Mon grand-parent"><label for="lien3">Mon grand-parent</label></div>
-        <div class="radio-option"><input type="radio" name="lien" id="lien4" value="Mon conjoint"><label for="lien4">Mon conjoint</label></div>
-        <div class="radio-option"><input type="radio" name="lien" id="lien5" value="Autre"><label for="lien5">Autre</label></div>
-      </div>
-    </div>
-    <button class="btn btn-primary btn-block" onclick="goToStep(2)">Continuer →</button>
-  </section>
-
-  <!-- Étape 2 : questions -->
-  <section class="step-panel" data-step="2">
-    <h2 id="qTitle">Quel était son métier ?</h2>
-    <p class="step-hint">Vous pouvez répondre avec quelques mots, une phrase ou une petite anecdote.</p>
-    <div class="question-progress" id="qDots"></div>
-    <div class="question-card">
-      <textarea id="qAnswer" maxlength="500" placeholder="Écrivez ici…" oninput="updateCharCount()"></textarea>
-      <div class="char-count"><span id="charCount">0</span>/500</div>
-      <div class="hint-box">💡 <span>Une petite anecdote rend souvent le souvenir encore plus vivant.</span></div>
-    </div>
-    <div class="question-actions">
-      <button class="btn btn-outline" onclick="nextQuestion(true)">Passer cette question</button>
-      <button class="btn btn-primary" id="qNextBtn" onclick="nextQuestion(false)">Question suivante →</button>
-    </div>
-  </section>
-
-  <!-- Étape 3 : photos -->
-  <section class="step-panel" data-step="3">
-    <h2>Ajoutez vos photos</h2>
-    <p class="step-hint">Sélectionnez entre 3 et 10 photos. Vous pourrez ajouter des légendes si vous le souhaitez.</p>
-    <p class="photo-count-note" id="photoCountNote">0 photo ajoutée</p>
-    <div class="photo-grid" id="photoGrid">
-      <div class="photo-add" id="photoAdd">
-        <span style="font-size:1.4rem;">＋</span>
-        <span>Ajouter une photo</span>
-      </div>
-    </div>
-    <input type="file" id="photoInput" accept="image/*" multiple style="display:none;">
-    <button class="btn btn-primary btn-block" onclick="goToStep(4)">Suivant →</button>
-  </section>
-
-  <!-- Étape 4 : style -->
-  <section class="step-panel" data-step="4">
-    <h2>Choisissez le style de votre livre</h2>
-    <p class="step-hint">4 styles sont disponibles pour créer un livre qui vous ressemble.</p>
-    <div class="style-grid" id="styleGrid">
-      <div class="style-card selected" data-style="Doux & naturel"><div class="swatch swatch-1"></div><p>Doux &amp; naturel</p><div class="check">✓</div></div>
-      <div class="style-card" data-style="Élégant & intemporel"><div class="swatch swatch-2"></div><p>Élégant &amp; intemporel</p><div class="check">✓</div></div>
-      <div class="style-card" data-style="Tendre & fleuri"><div class="swatch swatch-3"></div><p>Tendre &amp; fleuri</p><div class="check">✓</div></div>
-      <div class="style-card" data-style="Photo & souvenirs"><div class="swatch swatch-4"></div><p>Photo &amp; souvenirs</p><div class="check">✓</div></div>
-    </div>
-    <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="goToStep(5)">Suivant →</button>
-  </section>
-
-  <!-- Étape 5 : aperçu + commande -->
-  <section class="step-panel" data-step="5">
-    <h2>Aperçu de votre livre</h2>
-    <div class="preview-book">
-      <h4 id="previewTitle">Les souvenirs de Madeleine</h4>
-      <p id="previewStyle">Style : Doux & naturel — <span id="previewPhotoCount">0</span> photo(s) ajoutée(s)</p>
-    </div>
-    <div class="edit-note">✅ <span>Vous pouvez encore modifier vos réponses, vos photos ou le style avant de commander.</span></div>
-
-    <div class="order-summary">
-      <div class="order-row"><span>Le petit livre souvenir</span><span>29,00 €</span></div>
-      <div class="order-row" style="opacity:0.7;"><span>15 pages · 10 questions · style au choix</span></div>
-      <div class="order-row"><span>Exemplaires</span>
-        <span class="qty-control">
-          <button onclick="changeQty(-1)">−</button>
-          <span id="qtyVal">1</span>
-          <button onclick="changeQty(1)">+</button>
-        </span>
-      </div>
-      <div class="order-row"><span>Livraison (France métropolitaine)</span><span>4,90 €</span></div>
-      <div class="order-row total"><span>Total</span><span id="orderTotal">33,90 €</span></div>
-    </div>
-    <button class="btn btn-primary btn-block" onclick="goToStep(6)">Commander mon livre →</button>
-  </section>
-
-  <!-- Étape 6 : confirmation -->
-  <section class="step-panel" data-step="6">
-    <div class="confirm-panel">
-      <div class="confirm-check">✓</div>
-      <h2>Votre livre est en préparation !</h2>
-      <p>Merci pour votre confiance. Vous allez recevoir un email de confirmation avec le récapitulatif de votre commande.</p>
-      <a href="index.html" class="btn btn-outline" style="margin-top:24px;">Retour à l'accueil</a>
-      <p class="confirm-quote">Les plus beaux souvenirs ne s'oublient jamais. ♡</p>
-    </div>
-  </section>
-
+<section class="panel" data-step="6">
+  <div class="success"><div class="check">✓</div><h2>Votre livre est prêt à passer en production.</h2><p>Le parcours fonctionne jusqu'à la confirmation. Pour vendre réellement, il faudra connecter le paiement, la commande et l'impression.</p><a class="btn outline" href="index.html" style="display:inline-flex;margin-top:15px">Retour à l'accueil</a><div class="quote" style="margin-top:30px;font-family:var(--serif);font-style:italic;color:var(--sage2)">« Les souvenirs prennent une autre valeur quand on peut les feuilleter. »</div></div>
+</section>
 </main>
-
 <script>
-  const totalSteps = 5; // la confirmation (6) n'entre pas dans la barre de progression
-  const questions = [
-    "Quel était son métier ?",
-    "Où a-t-elle grandi ?",
-    "Quelle est la rencontre qui a marqué sa vie ?",
-    "Quelle est sa plus grande passion ?",
-    "Quel souvenir de vacances garde-t-elle ?",
-    "Quel plat ou quelle recette aime-t-elle particulièrement ?",
-    "Qui est une personne qui compte beaucoup pour elle ?",
-    "Quelle est une anecdote amusante à son sujet ?",
-    "Qu'aimez-vous le plus chez elle ?",
-    "Y a-t-il une phrase ou une expression qu'elle dit souvent ?"
-  ];
-  let currentQuestion = 0;
-  let photos = [];
-  let qty = 1;
-  let selectedStyle = "Doux & naturel";
-
-  function renderDots(){
-    const dots = document.getElementById('qDots');
-    dots.innerHTML = '';
-    questions.forEach((_, i) => {
-      const d = document.createElement('span');
-      d.className = 'qdot' + (i < currentQuestion ? ' done' : i === currentQuestion ? ' current' : '');
-      dots.appendChild(d);
-    });
-  }
-
-  function loadQuestion(){
-    document.getElementById('qTitle').textContent = questions[currentQuestion];
-    document.getElementById('qAnswer').value = '';
-    updateCharCount();
-    document.getElementById('qNextBtn').textContent = currentQuestion === questions.length - 1 ? 'Continuer →' : 'Question suivante →';
-    renderDots();
-  }
-
-  function updateCharCount(){
-    document.getElementById('charCount').textContent = document.getElementById('qAnswer').value.length;
-  }
-
-  function nextQuestion(skip){
-    if(currentQuestion < questions.length - 1){
-      currentQuestion++;
-      loadQuestion();
-    } else {
-      goToStep(3);
-    }
-  }
-
-  function goToStep(n){
-    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-    document.querySelector('.step-panel[data-step="'+n+'"]').classList.add('active');
-    const shown = Math.min(n, totalSteps);
-    document.getElementById('stepCount').textContent = shown + ' sur ' + totalSteps;
-    document.getElementById('progressFill').style.width = (shown / totalSteps * 100) + '%';
-    if(n === 2){ currentQuestion = 0; loadQuestion(); }
-    if(n === 5){ updatePreview(); }
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
-  // Photos
-  const photoAdd = document.getElementById('photoAdd');
-  const photoInput = document.getElementById('photoInput');
-  const photoGrid = document.getElementById('photoGrid');
-  photoAdd.addEventListener('click', () => photoInput.click());
-  photoInput.addEventListener('change', (e) => {
-    Array.from(e.target.files).forEach(file => {
-      if(photos.length >= 10) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        photos.push(ev.target.result);
-        renderPhotos();
-      };
-      reader.readAsDataURL(file);
-    });
-    photoInput.value = '';
-  });
-
-  function renderPhotos(){
-    photoGrid.innerHTML = '';
-    photos.forEach((src, i) => {
-      const div = document.createElement('div');
-      div.className = 'photo-thumb';
-      div.innerHTML = '<img src="'+src+'"><button onclick="removePhoto('+i+')">✕</button>';
-      photoGrid.appendChild(div);
-    });
-    if(photos.length < 10){
-      photoGrid.appendChild(photoAdd);
-    }
-    document.getElementById('photoCountNote').textContent =
-      photos.length + (photos.length <= 1 ? ' photo ajoutée' : ' photos ajoutées');
-  }
-
-  function removePhoto(i){
-    photos.splice(i,1);
-    renderPhotos();
-  }
-
-  // Style
-  document.querySelectorAll('.style-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectedStyle = card.dataset.style;
-    });
-  });
-
-  // Order
-  function changeQty(delta){
-    qty = Math.max(1, qty + delta);
-    document.getElementById('qtyVal').textContent = qty;
-    updateOrderTotal();
-  }
-  function updateOrderTotal(){
-    const total = (29 * qty + 4.9).toFixed(2).replace('.', ',') + ' €';
-    document.getElementById('orderTotal').textContent = total;
-  }
-
-  function updatePreview(){
-    const name = document.getElementById('firstName').value.trim() || 'votre proche';
-    document.getElementById('previewTitle').textContent = 'Les souvenirs de ' + name;
-    document.getElementById('previewStyle').innerHTML = 'Style : ' + selectedStyle + ' — <span>' + photos.length + '</span> photo(s) ajoutée(s)';
-  }
-
-  renderPhotos();
+const questions=["Quel était son métier ?","Où a-t-elle grandi ?","Quelle rencontre a marqué sa vie ?","Quelle est sa plus grande passion ?","Quel souvenir de vacances garde-t-elle ?","Quel plat ou quelle recette aime-t-elle particulièrement ?","Qui est une personne qui compte beaucoup pour elle ?","Quelle anecdote amusante raconte-t-on à son sujet ?","Qu'aimez-vous le plus chez elle ?","Y a-t-il une phrase ou une expression qu'elle dit souvent ?"];
+let step=1,q=0,answers=Array(10).fill(""),photos=[],style="Doux & naturel",qty=1;
+const $=id=>document.getElementById(id);
+function go(n){document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));document.querySelector(`[data-step="${n}"]`).classList.add("active");const shown=Math.min(n,5);$("stepCount").textContent=shown+" sur 5";$("fill").style.width=(shown/5*100)+"%";if(n===2)renderQ();if(n===5)preview();scrollTo({top:0,behavior:"smooth"})}
+function renderQ(){ $("qtitle").textContent=questions[q];$("answer").value=answers[q];$("counter").textContent=answers[q].length;$("qnum").textContent=(q+1)+" / 10";$("nextQ").textContent=q===9?"Continuer →":"Question suivante →";$("dots").innerHTML=questions.map((_,i)=>`<i class="dot ${i<q?"done":i===q?"current":""}"></i>`).join("")}
+$("startBtn").onclick=()=>{if(!$("name").value.trim()){ $("name").focus(); return }go(2)};
+$("answer").oninput=e=>{answers[q]=e.target.value;$("counter").textContent=e.target.value.length};
+function advance(){answers[q]=$("answer").value;if(q<9){q++;renderQ()}else go(3)}
+$("nextQ").onclick=advance;$("skip").onclick=()=>{answers[q]="";advance()};
+const file=$("file"), photoBox=$("photos");document.querySelector(".photos").addEventListener("click",e=>{if(e.target.closest(".add"))file.click()});
+function renderPhotos(){photoBox.innerHTML=photos.map((src,i)=>`<div class="thumb"><img src="${src}" alt="Photo ${i+1}"><button class="remove" onclick="removePhoto(${i})" aria-label="Supprimer">×</button></div>`).join("")+(photos.length<10?`<button class="add" type="button"><span>＋<br>Ajouter une photo</span></button>`:"");$("photoNote").textContent=photos.length+" photo"+(photos.length>1?"s":"")+" · 3 minimum";$("photoNext").disabled=photos.length<3}
+function removePhoto(i){photos.splice(i,1);renderPhotos()}
+file.onchange=e=>{Array.from(e.target.files).slice(0,10-photos.length).forEach(f=>{const r=new FileReader();r.onload=ev=>{photos.push(ev.target.result);renderPhotos()};r.readAsDataURL(f)});file.value=""};renderPhotos();
+document.querySelectorAll(".style").forEach(x=>x.onclick=()=>{document.querySelectorAll(".style").forEach(y=>y.classList.remove("selected"));x.classList.add("selected");style=x.dataset.style});
+function preview(){const name=$("name").value.trim()||"votre proche";$("previewName").textContent="Les souvenirs de "+name;$("cover").innerHTML="Les souvenirs<br>de "+name;$("previewMeta").textContent=style+" · 10 questions · "+photos.length+" photos";updateTotal()}
+function updateTotal(){$("qty").textContent=qty;$("total").textContent=(29*qty+4.9).toFixed(2).replace(".",",")+" €"}
+$("minus").onclick=()=>{qty=Math.max(1,qty-1);updateTotal()};$("plus").onclick=()=>{qty++;updateTotal()};$("photoNext").onclick=()=>go(4);$("order").onclick=()=>go(6);
 </script>
-
 </body>
 </html>
