@@ -78,10 +78,11 @@ nav.links a:not(.btn):hover{color:var(--ink)}
 .trust-item svg{color:var(--green-dark)}
 .trust-div{width:1px;height:18px;background:var(--line)}
 
-.section{padding:96px 0}
+.section{padding:74px 0}
 .section.tint{background:var(--sage)}
 
-.steps{margin-top:52px}
+.steps{margin-top:40px}
+.step-time{display:inline-block;margin-top:2px;font-size:.68rem;color:var(--green-dark);background:rgba(65,83,62,.08);border-radius:999px;padding:3px 10px}
 .step-row{display:flex;justify-content:space-between;align-items:center;max-width:640px;margin:0 auto;gap:10px}
 .step-node{display:flex;align-items:center;gap:9px}
 .step-num{width:38px;height:38px;border-radius:50%;background:var(--paper2);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--serif);font-size:.95rem;color:var(--green-dark)}
@@ -114,6 +115,25 @@ nav.links a:not(.btn):hover{color:var(--ink)}
 .tags{display:flex;gap:10px;flex-wrap:wrap}
 .tag{border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.76rem;color:var(--ink);background:var(--paper2);transition:border-color .2s,color .2s}
 .tag:hover{border-color:var(--green);color:var(--green-dark)}
+
+.who-grid{margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.who{border:1px solid var(--line);border-radius:16px;padding:24px 20px;background:var(--paper2)}
+.who strong{display:block;font-family:var(--serif);font-size:1.25rem;margin-bottom:8px;color:var(--green-dark)}
+.who span{display:block;font-size:.78rem;color:var(--muted)}
+
+.quote-strip{margin-top:44px;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.quote-card{border:1px solid var(--line);border-radius:16px;padding:24px;background:var(--paper2)}
+.quote-card .stars{color:var(--clay);font-size:.85rem;letter-spacing:2px;margin-bottom:12px}
+.quote-card p{font-family:var(--serif);font-size:1.1rem;font-style:italic;color:var(--ink);line-height:1.4;margin-bottom:14px}
+.quote-card .who-said{font-size:.74rem;color:var(--muted)}
+.process-frame{margin-top:44px;display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center}
+.process-frame img{width:100%;height:280px;object-fit:cover;border-radius:16px;box-shadow:0 26px 55px rgba(38,38,31,.14)}
+
+.quick-faq{max-width:760px;margin:24px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.quick-faq div{background:var(--paper2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.quick-faq strong{display:block;font-size:.76rem;margin-bottom:4px}
+.quick-faq span{font-size:.72rem;color:var(--muted)}
+@media(max-width:860px){.who-grid{grid-template-columns:1fr 1fr}.quote-strip{grid-template-columns:1fr}.process-frame{grid-template-columns:1fr}}
 :focus-visible{outline:2px solid var(--green-dark);outline-offset:2px}
 
 .cards{margin-top:50px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
@@ -138,7 +158,8 @@ nav.links a:not(.btn):hover{color:var(--ink)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .28s}
 .faq-a p{color:var(--muted);font-size:.8rem;padding:0 22px 20px}
 
-.cta{position:relative;padding:120px 0;text-align:center;overflow:hidden;color:#f8f6ef}
+.cta{position:relative;padding:96px 0;text-align:center;overflow:hidden;color:#f8f6ef}
+.cta .price-note{color:#e4e6dd;justify-content:center;display:flex;margin-top:20px}
 .cta-bg{position:absolute;inset:0;object-fit:cover;width:100%;height:100%}
 .cta:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(38,38,31,.55),rgba(38,38,31,.72))}
 .cta .wrap{position:relative;z-index:2}
@@ -165,16 +186,18 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
 }
 @media(max-width:560px){
   .wrap{width:calc(100% - 30px)}
-  .section{padding:72px 0}
-  .hero{padding:36px 0 0}
-  .trust-in{gap:12px;padding:16px 0}
+  .section{padding:52px 0}
+  .hero{padding:30px 0 0}
+  .trust-in{gap:12px;padding:14px 0}
   .trust-item{font-size:.68rem;gap:6px}
   .step-row{max-width:100%}
   .step-num{width:32px;height:32px;font-size:.82rem}
   .art-frame img{height:280px}
   .polaroids{height:300px}
   .cards{grid-template-columns:1fr 1fr}
-  .cta{padding:88px 0}
+  .cta{padding:64px 0}
+  .who-grid{grid-template-columns:1fr 1fr}
+  .quick-faq{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -189,16 +212,16 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
 <main>
 <section class="hero"><div class="wrap">
   <div class="hero-copy">
-    <div class="eyebrow">Un cadeau qui garde l'essentiel</div>
-    <h1>Une vie entière peut tenir dans un petit livre.</h1>
-    <p>Quelques questions, quelques photos, et les souvenirs d'une personne chère deviennent un livre unique — à offrir, à ouvrir, à transmettre.</p>
+    <div class="eyebrow">L'Histoire de [Prénom]</div>
+    <h1>Le livre qui raconte les souvenirs de ceux que vous aimez.</h1>
+    <p>12 questions, quelques photos, et les souvenirs d'une personne chère deviennent un livre unique à offrir.</p>
     <div class="hero-actions">
       <a class="btn primary" href="creer.html">Créer mon livre <span>→</span></a>
       <a class="btn ghost" href="#livre"><span class="play-dot"><svg viewBox="0 0 10 10"><path d="M1 0.5v9l8-4.5z"/></svg></span>Découvrir le livre</a>
     </div>
-    <div class="price-note">Dès 29 €, livré chez vous.</div>
+    <div class="price-note">À partir de 29 € · Environ 10 min · Livraison chez vous</div>
   </div>
-  <div class="hero-photo"><img src="assets/hero.jpg" alt="Une femme tient avec émotion le livre souvenir qu'elle vient de recevoir"></div>
+  <div class="hero-photo"><img src="assets/book-spread.jpg" alt="Double page ouverte d'un livre souvenir : une photo et le texte qui l'accompagne"></div>
   <div class="hero-quote">« Les détails d'une vie deviennent les trésors d'une famille. »</div>
 </div></section>
 
@@ -223,10 +246,10 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
       <div class="step-node"><div class="step-num">4</div><svg class="icon" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/></svg></div>
     </div>
     <div class="step-grid">
-      <div><h3>Les souvenirs</h3><p>Répondez à des questions qui font remonter de vraies scènes : un lieu, une rencontre, une anecdote, un moment précis.</p></div>
-      <div><h3>Les photos</h3><p>Choisissez les images qui racontent les différentes époques et les personnes importantes.</p></div>
-      <div><h3>L'univers</h3><p>Doux, élégant, fleuri ou photo : choisissez une direction qui ressemble à votre histoire.</p></div>
-      <div><h3>Le livre</h3><p>Relisez votre création, ajustez vos choix, puis commandez lorsque tout vous ressemble.</p></div>
+      <div><h3>① Répondez à 12 questions</h3><p>Des questions qui font remonter de vraies scènes : un lieu, une rencontre, une anecdote.</p><span class="step-time">≈ 10 min, à votre rythme</span></div>
+      <div><h3>② Ajoutez vos photos</h3><p>Choisissez les images qui racontent les différentes époques et les personnes importantes.</p></div>
+      <div><h3>③ Choisissez l'univers</h3><p>Doux, élégant, fleuri ou photo : une direction qui ressemble à votre histoire.</p></div>
+      <div><h3>④ Recevez votre livre</h3><p>Relisez votre création, ajustez vos choix, puis recevez-le imprimé chez vous.</p></div>
     </div>
   </div>
 </div></section>
@@ -270,7 +293,17 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
   </div>
 </div></section>
 
-<section class="section tint"><div class="wrap">
+<section class="section tint" id="pour-qui"><div class="wrap">
+  <div class="head"><div class="eyebrow">Pour qui ?</div><h2>Pour la personne qui a déjà tout.</h2><p>Le seul cadeau qu'on ne peut pas acheter tout fait : son histoire, racontée par ceux qui la connaissent le mieux.</p></div>
+  <div class="who-grid">
+    <div class="who"><strong>Pour votre maman</strong><span>Ses souvenirs, ses expressions, vos moments ensemble.</span></div>
+    <div class="who"><strong>Pour votre papa</strong><span>Son histoire racontée par ceux qui la connaissent le mieux.</span></div>
+    <div class="who"><strong>Pour vos grands-parents</strong><span>Un livre à transmettre aux générations suivantes.</span></div>
+    <div class="who"><strong>Pour un départ à la retraite</strong><span>Une vie de souvenirs réunie dans un objet qu'il pourra garder.</span></div>
+  </div>
+</div></section>
+
+<section class="section"><div class="wrap">
   <div class="head"><div class="eyebrow">Une expérience volontairement simple</div><h2>Le cadeau est émotionnel. Le parcours, lui, doit être facile.</h2><p>Pas de compte compliqué, pas de jargon, pas de mur de formulaire. Chaque étape vous montre exactement ce qu'il reste à faire.</p></div>
   <div class="cards">
     <div class="card"><svg class="icon" viewBox="0 0 24 24"><path d="M4 20l1.2-4.2L16 5a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8.2 18.8 4 20Z"/></svg><h3>Des questions bien pensées</h3><p>Un fil conducteur simple, pensé pour ne jamais laisser face à une page blanche.</p></div>
@@ -282,8 +315,27 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
   <div class="notice"><svg class="icon" viewBox="0 0 24 24" style="flex-shrink:0"><path d="M6 10V8a6 6 0 1 1 12 0v2M5 10h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1Z"/></svg><span>Vos photos et vos réponses restent privées : elles ne servent qu'à la création de votre livre, et ne sont jamais partagées.</span></div>
 </div></section>
 
+<section class="section tint" id="coulisses"><div class="wrap">
+  <div class="head"><div class="eyebrow">Les coulisses</div><h2>Chaque livre est encore fait à la main, avec soin.</h2><p>Nous en sommes aux tout premiers exemplaires. Voici, en toute transparence, comment vos réponses deviennent un livre.</p></div>
+  <div class="process-frame">
+    <img src="assets/process.jpg" alt="Étapes de fabrication du livre souvenir, de la mise en page à l'impression">
+    <div>
+      <div class="benefits" style="margin-bottom:0">
+        <div class="benefit"><i class="check"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M5 12l4.5 4.5L19 7"/></svg></i><div><strong>Vos mots, mis en forme</strong><span>Chaque réponse est retravaillée pour devenir un texte court et juste, jamais réécrit à votre place sans validation.</span></div></div>
+        <div class="benefit"><i class="check"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M5 12l4.5 4.5L19 7"/></svg></i><div><strong>Une mise en page pensée</strong><span>Chaque photo trouve sa page, chaque texte trouve son rythme.</span></div></div>
+        <div class="benefit"><i class="check"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M5 12l4.5 4.5L19 7"/></svg></i><div><strong>Une impression soignée</strong><span>Papier épais, reliure durable : un objet fait pour être gardé.</span></div></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
 <section class="section" id="faq"><div class="wrap">
   <div class="head"><div class="eyebrow">Tout savoir</div><h2>Vos questions, nos réponses</h2></div>
+  <div class="quick-faq">
+    <div><strong>⏱ Combien de temps ?</strong><span>≈ 10 minutes pour répondre aux 12 questions.</span></div>
+    <div><strong>✏️ Un droit à l'erreur ?</strong><span>Vous pouvez tout modifier avant de finaliser.</span></div>
+    <div><strong>📦 Quand je le reçois ?</strong><span>Le délai est indiqué clairement avant la commande.</span></div>
+  </div>
   <div class="faq">
     <div class="faq-item"><button class="faq-q">Combien de temps faut-il pour créer mon livre ?<span>+</span></button><div class="faq-a"><p>Le parcours est conçu pour être rempli tranquillement en quelques minutes, avec 12 questions guidées et l'ajout des photos.</p></div></div>
     <div class="faq-item"><button class="faq-q">Combien de photos puis-je ajouter ?<span>+</span></button><div class="faq-a"><p>Entre 3 et 10 photos. Le nombre définitif pourra être ajusté selon le format d'impression retenu.</p></div></div>
@@ -295,9 +347,10 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
 
 <section class="cta"><img class="cta-bg" src="assets/book-wide.jpg" alt=""><div class="wrap">
   <div class="eyebrow">Commencez simplement</div>
-  <h2>12 questions. Quelques photos. Une histoire à transmettre.</h2>
-  <p class="cta-lead">Le meilleur moment pour écrire une histoire est souvent avant qu'elle ne reste seulement dans nos souvenirs.</p>
-  <a class="btn primary" href="creer.html">Créer mon livre →</a>
+  <h2>Dans quelques années, vous serez heureux d'avoir fait ce livre.</h2>
+  <p class="cta-lead">12 questions. Quelques photos. Et les souvenirs que vous ne voulez surtout pas perdre.</p>
+  <a class="btn primary" href="creer.html">Créer mon livre — dès 29 € →</a>
+  <div class="price-note">Livraison chez vous · Modifiable avant commande</div>
 </div></section>
 </main>
 
