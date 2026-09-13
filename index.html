@@ -49,8 +49,7 @@ svg.icon{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.4;s
 header{position:sticky;top:0;z-index:50;background:rgba(247,243,238,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
 .nav{height:74px;display:flex;align-items:center;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:9px}
-.brand-mark{width:26px;height:26px;color:var(--green)}
-.brand-name{font-family:var(--serif);font-size:1.15rem}
+.brand-logo{height:38px;width:auto;display:block}
 nav.links{display:flex;align-items:center;gap:26px;font-size:.82rem;color:var(--muted)}
 nav.links a:not(.btn):hover{color:var(--ink)}
 .nav-mobile{display:none;border:0;background:none;padding:6px;color:var(--ink);cursor:pointer}
@@ -170,7 +169,7 @@ nav.links a:not(.btn):hover{color:var(--ink)}
 
 footer{padding:40px 0;border-top:1px solid var(--line)}
 .foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
-.foot .brand-name small{display:block;font-family:var(--sans);font-size:.62rem;color:var(--muted);margin-top:2px}
+.foot .brand-logo{height:56px;width:auto;display:block}
 .copyright{font-size:.68rem;color:var(--muted);margin-top:8px}
 .foot-links{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:.7rem}
 
@@ -203,7 +202,7 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
 </head>
 <body>
 <header><div class="wrap nav">
-<a class="brand" href="#"><svg class="brand-mark" viewBox="0 0 32 32" fill="none"><path d="M4 8c4-3 8-2 12 1v15c-4-3-8-4-12-1V8Zm24 0c-4-3-8-2-12 1v15c4-3 8-4 12-1V8Z" stroke="currentColor" stroke-width="1.6"/></svg><span class="brand-name">Souvenirs à partager</span></a>
+<a class="brand" href="#"><img class="brand-logo" src="assets/logo-mark.png" alt="intiqal"></a>
 <nav class="links"><a href="#concept">Le concept</a><a href="#livre">Le livre</a><a href="#histoire">L'intention</a><a href="#faq">FAQ</a><a class="btn primary" href="creer.html">Créer mon livre →</a></nav>
 <button class="nav-mobile" id="menuBtn" aria-label="Ouvrir le menu" aria-expanded="false"><svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
 <div class="mobile-menu" id="mobileMenu"><a href="#concept">Le concept</a><a href="#livre">Le livre</a><a href="#histoire">L'intention</a><a href="#faq">FAQ</a><a class="btn primary" href="creer.html">Créer mon livre →</a></div>
@@ -350,7 +349,7 @@ footer{padding:40px 0;border-top:1px solid var(--line)}
 </main>
 
 <footer><div class="wrap foot">
-  <div><div class="brand"><svg class="brand-mark" viewBox="0 0 32 32" fill="none"><path d="M4 8c4-3 8-2 12 1v15c-4-3-8-4-12-1V8Zm24 0c-4-3-8-2-12 1v15c4-3 8-4 12-1V8Z" stroke="var(--green)" stroke-width="1.6"/></svg><span class="brand-name">Souvenirs à partager</span></div><div class="copyright">Des histoires à transmettre. Des souvenirs à garder.</div></div>
+  <div><div class="brand"><img class="brand-logo" src="assets/logo.png" alt="intiqal — Vos souvenirs, en livre"></div><div class="copyright">Des histoires à transmettre. Des souvenirs à garder.</div></div>
   <div class="foot-links"><a href="#concept">Concept</a><a href="#livre">Le livre</a><a href="#histoire">L'intention</a><a href="#faq">FAQ</a><a href="#">Mentions légales</a><a href="#">Confidentialité</a></div>
 </div></footer>
 
