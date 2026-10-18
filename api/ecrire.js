@@ -236,8 +236,17 @@ async function callModel(system, user) {
     throw new HttpError(429, "Le service d'écriture est très sollicité. Réessayez dans une minute.");
   }
   if (!r.ok) {
-    console.error("gemini status", r.status);
-    throw new HttpError(502, "Le service d'écriture est indisponible pour le moment.");
+    // Détail court de la réponse de Google, pour comprendre le problème (sans secret).
+    let detail = "";
+    try {
+      const corps = JSON.parse(await r.text());
+      detail = String((corps && corps.error && corps.error.message) || "").replace(/\s+/g, " ").slice(0, 160);
+    } catch (e) {}
+    console.error("gemini status", r.status, detail);
+    throw new HttpError(
+      502,
+      "Le service d'écriture est indisponible pour le moment (réponse de Google : " + r.status + (detail ? ", " + detail : "") + ")."
+    );
   }
   const data = await r.json();
   const parties = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
