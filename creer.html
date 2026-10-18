@@ -45,6 +45,15 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 .dot.done{background:#879782}
 .dot.current{background:var(--green);transform:scale(1.3)}
 .small{font-size:.95rem;color:var(--muted)}
+.texts{margin-top:18px;background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:22px}
+.texts h3{font-size:1.5rem;margin-bottom:6px}
+.texts .ai-note{margin:14px 0;background:#fbefd9;border:1px solid #e3c88f;color:#5e430d;border-radius:12px;padding:12px 14px;font-size:.93rem}
+.tpage{margin-top:16px}
+.tpage label{display:block;font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:6px}
+.tpage input[type=text]{width:100%;border:1px solid rgba(38,38,31,.25);background:#fff;border-radius:11px;padding:11px 13px;color:var(--ink);outline:none;margin-bottom:8px;font-weight:600}
+.tpage textarea{min-height:120px;resize:vertical}
+.texts .btn{margin-top:18px}
+.texts .stale{color:#8a4a12;font-size:.93rem;margin-top:12px}
 .qcard{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:24px}
 .qcard h3{font-size:1.9rem;margin-bottom:14px}
 .qcard textarea{min-height:170px;resize:vertical}
@@ -167,6 +176,14 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 <section class="panel" data-step="5" aria-labelledby="h5s"><h2 id="h5s" tabindex="-1">Votre histoire prend forme.</h2>
   <p class="intro">Voici une première vue de votre création. Vous pourrez encore modifier vos choix.</p>
   <div class="preview"><div class="cover s1" id="cover"></div><div><h3 id="previewTitle"></h3><p class="small" id="metaPreview"></p><p class="small" style="margin-top:14px">15 pages · création personnalisée · choix modifiables avant commande.</p><div class="empty-warn" id="emptyWarn" hidden>Vous n'avez répondu à aucune question. <button type="button" id="toQ">Revenir aux questions</button></div></div></div>
+  <div class="texts" id="textsBox">
+    <h3>Les textes de votre livre</h3>
+    <p class="small">Une page par souvenir, écrite à partir de vos mots. Relisez et corrigez ce que vous voulez : rien n'est imprimé sans votre accord.</p>
+    <div class="ai-note"><strong>À savoir :</strong> pour écrire les textes, vos réponses écrites (jamais vos photos) sont envoyées à un service d'intelligence artificielle (Google Gemini). Dans cette démonstration, Google peut les réutiliser pour améliorer ses produits : n'y mettez rien de confidentiel.</div>
+    <div class="warn" id="textsMsg" role="status" aria-live="polite"></div>
+    <div id="textsList"></div>
+    <button class="btn primary" id="genTexts" type="button">✨ Écrire les textes de mon livre</button>
+  </div>
   <div class="summary"><div class="row"><span>Le livre souvenir</span><span>29,00 €</span></div><div class="row"><span>Exemplaires</span><span class="qty"><button id="minus" type="button" aria-label="Moins d'exemplaires">−</button><b id="qty" aria-live="polite">1</b><button id="plus" type="button" aria-label="Plus d'exemplaires">+</button></span></div><div class="row"><span>Livraison</span><span>4,90 €</span></div><div class="row total"><span>Total</span><span id="total">33,90 €</span></div></div>
   <div class="assure"><div>✏️ Modifiable</div><div>📷 Vos photos</div><div>♡ Personnalisé</div></div>
   <div class="demo-note"><strong>Version de démonstration.</strong> Le paiement n'est pas encore activé : rien ne sera facturé et aucune commande ne sera enregistrée.</div>
@@ -185,7 +202,7 @@ const $=id=>document.getElementById(id);
 const store={
   get(k,d=null){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}},
-  clear(){try{["intiqal_name","intiqal_rel","intiqal_gender","intiqal_answers","intiqal_style","intiqal_photos"].forEach(k=>localStorage.removeItem(k))}catch(e){}}
+  clear(){try{["intiqal_name","intiqal_rel","intiqal_gender","intiqal_answers","intiqal_style","intiqal_photos","intiqal_texts"].forEach(k=>localStorage.removeItem(k))}catch(e){}}
 };
 const STYLES={s1:"Doux & naturel",s2:"Élégant & intemporel",s3:"Tendre & fleuri",s4:"Photo & souvenirs"};
 const QUESTIONS=[
@@ -223,7 +240,7 @@ function go(n){
   const p=document.querySelector(`[data-step="${n}"]`);p.classList.add("active");
   const shown=Math.min(n,5);
   $("count").textContent="Étape "+shown+" sur 5";$("fill").style.width=(shown/5*100)+"%";$("track").setAttribute("aria-valuenow",shown);
-  if(n===2)renderQ();if(n===3)renderPhotos();if(n===4)renderStyles();if(n===5)renderPreview();
+  if(n===2)renderQ();if(n===3)renderPhotos();if(n===4)renderStyles();if(n===5){renderPreview();renderTexts()}
   scrollTo({top:0,behavior:"smooth"});
   const h=p.querySelector("h2");if(h)h.focus({preventScroll:true});
 }
@@ -316,6 +333,63 @@ $("plus").onclick=()=>{qty=Math.min(20,qty+1);updateTotal()};
 $("toQ").onclick=()=>{q=0;go(2)};
 $("back5").onclick=()=>go(4);
 $("order").onclick=()=>go(6);
+
+
+/* Textes du livre écrits par l'IA (via /api/ecrire) */
+let texts=store.get("intiqal_texts",null);
+if(!texts||typeof texts!=="object"||!Array.isArray(texts.pages))texts=null;
+function signature(){return JSON.stringify([name.trim(),rel,gender,answers])}
+function askItems(){
+  const items=[];
+  answers.forEach((a,i)=>{if(a.trim())items.push({i,q:fill(QUESTIONS[i].q),a:a.trim()})});
+  return items;
+}
+function field(labelText,id,value,multi,onInput){
+  const wrap=document.createElement("div");wrap.className="tpage";
+  const lab=document.createElement("label");lab.htmlFor=id;lab.textContent=labelText;wrap.append(lab);
+  const el=document.createElement(multi?"textarea":"input");
+  if(!multi)el.type="text";
+  el.id=id;el.value=value||"";el.maxLength=multi?900:80;
+  el.addEventListener("input",()=>{onInput(el.value);store.set("intiqal_texts",texts)});
+  wrap.append(el);return wrap;
+}
+function renderTexts(){
+  const box=$("textsList");box.textContent="";
+  const btn=$("genTexts");
+  if(!texts){btn.textContent="✨ Écrire les textes de mon livre";return}
+  btn.textContent="↻ Réécrire les textes";
+  if(texts.sig!==signature()){
+    const st=document.createElement("p");st.className="stale";
+    st.textContent="Vos réponses ont changé depuis l'écriture de ces textes. Cliquez sur « Réécrire » pour les mettre à jour.";
+    box.append(st);
+  }
+  if(texts.intro!==undefined)box.append(field("Dédicace d'ouverture","t_intro",texts.intro,true,v=>{texts.intro=v}));
+  texts.pages.forEach((p,k)=>{
+    box.append(field("Titre de la page "+(k+1),"t_titre"+k,p.titre,false,v=>{p.titre=v}));
+    box.append(field("Texte de la page "+(k+1),"t_texte"+k,p.texte,true,v=>{p.texte=v}));
+  });
+  if(texts.fin!==undefined)box.append(field("Phrase de fin","t_fin",texts.fin,true,v=>{texts.fin=v}));
+}
+$("genTexts").onclick=async()=>{
+  const msg=$("textsMsg"),btn=$("genTexts");
+  const items=askItems();
+  if(!items.length){msg.textContent="Répondez d'abord à au moins une question pour que l'on puisse écrire.";return}
+  if(texts&&!confirm("Vos corrections seront remplacées par une nouvelle écriture. Continuer ?"))return;
+  msg.textContent="";btn.disabled=true;const old=btn.textContent;btn.textContent="Écriture en cours…";
+  try{
+    const r=await fetch("/api/ecrire",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name:name.trim(),rel,gender:isMale()?"m":"f",items})});
+    let data=null;try{data=await r.json()}catch(_){}
+    if(!r.ok||!data||!Array.isArray(data.pages))throw new Error((data&&data.error)||"Le service d'écriture ne répond pas. Réessayez dans un instant.");
+    texts={intro:data.intro,pages:data.pages,fin:data.fin,sig:signature()};
+    store.set("intiqal_texts",texts);
+    msg.textContent="Voilà ! Relisez et corrigez ce que vous voulez.";
+    renderTexts();
+  }catch(e){
+    msg.textContent=e&&e.message?e.message:"Une erreur est survenue. Réessayez dans un instant.";
+    btn.textContent=old;
+  }finally{btn.disabled=false}
+};
 
 /* Étape 6 */
 $("back6").onclick=()=>go(5);

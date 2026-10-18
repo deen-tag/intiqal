@@ -31,10 +31,15 @@
 <h2>Où ces informations sont conservées</h2>
 <ul>
 <li>Dans cette version de démonstration, elles sont enregistrées uniquement dans votre navigateur (stockage local de votre appareil).</li>
-<li>Elles ne sont envoyées à aucun serveur et ne sont partagées avec personne.</li>
+<li>Vos photos ne quittent jamais votre navigateur dans cette version de démonstration.</li>
+<li>Vos réponses écrites ne sont envoyées nulle part, sauf si vous demandez l'écriture des textes (voir ci-dessous).</li>
 <li>Vous pouvez les effacer à tout moment avec le bouton ci-dessous, ou en vidant les données du site dans votre navigateur.</li>
 </ul>
 <p><button class="btn ghost" id="wipe" type="button">Effacer mes données enregistrées</button> <span id="wipeMsg" role="status" style="margin-left:10px;color:var(--green-dark)"></span></p>
+
+<h2>Écriture des textes par intelligence artificielle</h2>
+<p>Si vous cliquez sur « Écrire les textes de mon livre », le prénom, le lien avec votre proche et vos réponses écrites sont envoyés, via notre serveur hébergé chez Vercel, au service d'intelligence artificielle Google Gemini, qui renvoie les textes. Vos photos ne sont pas envoyées. Nous n'enregistrons pas ces données sur notre serveur.</p>
+<p>Dans cette version de démonstration, nous utilisons l'offre gratuite de Google : selon ses conditions, Google peut réutiliser les textes envoyés pour améliorer ses produits. N'y saisissez donc rien de confidentiel. Avant l'ouverture des commandes, ce fonctionnement sera revu et cette page mise à jour.</p>
 
 <h2>Cookies et suivi</h2>
 <p>Le site n'utilise ni cookie publicitaire ni outil de mesure d'audience.</p>
@@ -58,7 +63,7 @@
 <script>
 const menuBtn=document.getElementById("menuBtn"),mobileMenu=document.getElementById("mobileMenu");
 menuBtn.addEventListener("click",()=>{const open=mobileMenu.classList.toggle("open");menuBtn.setAttribute("aria-expanded",open)});
-document.getElementById("wipe").addEventListener("click",()=>{try{["intiqal_name","intiqal_rel","intiqal_gender","intiqal_answers","intiqal_style","intiqal_photos"].forEach(k=>localStorage.removeItem(k))}catch(e){}document.getElementById("wipeMsg").textContent="Données effacées."});
+document.getElementById("wipe").addEventListener("click",()=>{try{["intiqal_name","intiqal_rel","intiqal_gender","intiqal_answers","intiqal_style","intiqal_photos","intiqal_texts"].forEach(k=>localStorage.removeItem(k))}catch(e){}document.getElementById("wipeMsg").textContent="Données effacées."});
 </script>
 </body>
 </html>
