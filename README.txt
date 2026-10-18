@@ -1,8 +1,11 @@
-SOUVENIRS À PARTAGER — V4 PREMIUM
+INTIQAL — version de démonstration
 
-V4 : direction artistique + visuels générés + frontend premium.
+Pages : index.html (accueil), exemple.html (exemple fictif), creer.html (parcours de création),
+mentions-legales.html et confidentialite.html (modèles à compléter).
+Styles partagés : site.css. Images : assets/.
 
-Assets générés pour la direction artistique : hero, livre ouvert, cadeau, portrait.
-Le tunnel garde les réponses dans localStorage pendant le prototype.
+Le parcours garde prénom, réponses, photos (réduites) et style dans le navigateur (localStorage).
+Aucun paiement, aucune commande : la dernière étape est une simulation, annoncée comme telle.
 
-Avant production : connecter paiement, impression, livraison, stockage sécurisé des photos, CGV/confidentialité, analytics/consentement et backend de commande.
+Avant l'ouverture des commandes : paiement, impression, livraison, stockage sécurisé des photos,
+CGV, mentions légales complétées, confidentialité mise à jour, délai de livraison affiché.

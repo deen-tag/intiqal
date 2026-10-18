@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Confidentialité — Intiqal</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#3F5A46">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+<header class="site-header"><div class="wrap nav">
+  <a class="brand" href="index.html" aria-label="Intiqal — accueil"><img class="brand-logo" src="assets/logo-mark.png" width="520" height="136" alt="intiqal"></a>
+  <nav class="links" aria-label="Navigation principale"><a href="index.html#concept">Comment ça marche</a><a href="index.html#livre">Le livre</a><a href="exemple.html">Exemple</a><a href="index.html#faq">Questions</a><a class="btn primary" href="creer.html">Créer mon livre →</a></nav>
+  <button class="nav-mobile" id="menuBtn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu"><svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+</div>
+<div class="wrap mobile-menu" id="mobileMenu"><a href="index.html#concept">Comment ça marche</a><a href="index.html#livre">Le livre</a><a href="exemple.html">Exemple</a><a href="index.html#faq">Questions</a><a class="btn primary" href="creer.html">Créer mon livre →</a></div>
+</header>
+<main id="contenu" class="wrap"><article class="prose">
+<h1>Politique de confidentialité</h1>
+<p class="lead">Ce que le site fait de vos informations, en clair.</p>
+<div class="draft">Cette page décrit le fonctionnement actuel de la version de démonstration. Elle sera mise à jour avant l'ouverture des commandes.</div>
+
+<h2>Ce que vous saisissez</h2>
+<p>Pour créer un livre, vous renseignez un prénom, le lien avec votre proche, vos réponses à 12 questions, des photos et un style de livre.</p>
+
+<h2>Où ces informations sont conservées</h2>
+<ul>
+<li>Dans cette version de démonstration, elles sont enregistrées uniquement dans votre navigateur (stockage local de votre appareil).</li>
+<li>Elles ne sont envoyées à aucun serveur et ne sont partagées avec personne.</li>
+<li>Vous pouvez les effacer à tout moment avec le bouton ci-dessous, ou en vidant les données du site dans votre navigateur.</li>
+</ul>
+<p><button class="btn ghost" id="wipe" type="button">Effacer mes données enregistrées</button> <span id="wipeMsg" role="status" style="margin-left:10px;color:var(--green-dark)"></span></p>
+
+<h2>Cookies et suivi</h2>
+<p>Le site n'utilise ni cookie publicitaire ni outil de mesure d'audience.</p>
+
+<h2>Polices de caractères</h2>
+<p>Les polices (Cormorant Garamond et DM Sans) sont chargées depuis Google Fonts : votre navigateur contacte donc les serveurs de Google, qui reçoivent votre adresse IP.</p>
+
+<h2>Hébergement</h2>
+<p>Le site est hébergé par Vercel Inc., qui peut conserver des journaux techniques de connexion (adresse IP, date, page demandée) pour assurer la sécurité et le bon fonctionnement du service.</p>
+
+<h2>À l'ouverture des commandes</h2>
+<p>Nous indiquerons ici précisément quelles données sont envoyées pour fabriquer et livrer votre livre (réponses, photos, adresse de livraison), à quels prestataires (paiement, impression, livraison), pour quelle durée, et comment exercer vos droits d'accès, de rectification et de suppression.</p>
+
+<h2>Contact</h2>
+<p>Adresse e-mail : <span class="todo">[à compléter]</span></p>
+</article></main>
+<footer class="site-footer"><div class="wrap foot">
+  <div><a class="brand" href="index.html" aria-label="Intiqal — accueil"><img class="brand-logo" src="assets/logo-mark.png" width="520" height="136" loading="lazy" alt="intiqal"></a><div class="copyright">Vos souvenirs, en livre. Des histoires à transmettre.</div></div>
+  <div class="foot-links"><a href="index.html">Accueil</a><a href="exemple.html">Exemple</a><a href="mentions-legales.html">Mentions légales</a><a href="confidentialite.html">Confidentialité</a></div>
+</div></footer>
+<script>
+const menuBtn=document.getElementById("menuBtn"),mobileMenu=document.getElementById("mobileMenu");
+menuBtn.addEventListener("click",()=>{const open=mobileMenu.classList.toggle("open");menuBtn.setAttribute("aria-expanded",open)});
+document.getElementById("wipe").addEventListener("click",()=>{try{["intiqal_name","intiqal_rel","intiqal_gender","intiqal_answers","intiqal_style","intiqal_photos"].forEach(k=>localStorage.removeItem(k))}catch(e){}document.getElementById("wipeMsg").textContent="Données effacées."});
+</script>
+</body>
+</html>
