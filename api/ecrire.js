@@ -3,7 +3,7 @@
 //
 // Variables d'environnement (Vercel > Settings > Environment Variables) :
 //   GEMINI_API_KEY   obligatoire : clé gratuite créée sur Google AI Studio
-//   GEMINI_MODEL     optionnel   : défaut gemini-2.5-flash
+//   GEMINI_MODEL     optionnel   : impose un modèle (sinon gemini-3.8-flash, puis 3.7, puis 3.5)
 //   ALLOWED_ORIGINS  optionnel   : autres adresses autorisées, séparées par des virgules
 //
 // Pour changer de fournisseur d'IA plus tard, il suffit de remplacer la fonction
@@ -199,22 +199,15 @@ module.exports = async function handler(req, res) {
 };
 
 /* ---- Fournisseur d'IA : Google Gemini (offre gratuite pour les tests) ---- */
-async function callModel(system, user) {
-  const cle = process.env.GEMINI_API_KEY;
-  if (!cle) throw new HttpError(503, "L'écriture automatique n'est pas encore activée sur ce site.");
-  const modele = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const generationConfig = {
-    temperature: 0.7,
-    maxOutputTokens: 3000,
-    responseMimeType: "application/json"
-  };
-  if (/2\.5-flash/.test(modele)) generationConfig.thinkingConfig = { thinkingBudget: 0 };
+// Google retire régulièrement d'anciens modèles aux nouveaux comptes (erreur 404).
+// On essaie donc plusieurs modèles dans l'ordre ; GEMINI_MODEL permet d'en imposer un.
+const MODELES_PAR_DEFAUT = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash"];
 
+async function appelerModele(modele, cle, system, user) {
   const ctrl = new AbortController();
   const minuteur = setTimeout(() => ctrl.abort(), 25000);
-  let r;
   try {
-    r = await fetch(
+    return await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(modele) + ":generateContent",
       {
         method: "POST",
@@ -222,7 +215,7 @@ async function callModel(system, user) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: system }] },
           contents: [{ role: "user", parts: [{ text: user }] }],
-          generationConfig
+          generationConfig: { temperature: 0.7, maxOutputTokens: 8000, responseMimeType: "application/json" }
         }),
         signal: ctrl.signal
       }
@@ -231,6 +224,19 @@ async function callModel(system, user) {
     throw new HttpError(504, "Le service d'écriture ne répond pas. Réessayez dans un instant.");
   } finally {
     clearTimeout(minuteur);
+  }
+}
+
+async function callModel(system, user) {
+  const cle = process.env.GEMINI_API_KEY;
+  if (!cle) throw new HttpError(503, "L'écriture automatique n'est pas encore activée sur ce site.");
+  const modeles = process.env.GEMINI_MODEL ? [process.env.GEMINI_MODEL] : MODELES_PAR_DEFAUT;
+
+  let r;
+  for (let k = 0; k < modeles.length; k++) {
+    r = await appelerModele(modeles[k], cle, system, user);
+    if (r.status === 404 && k < modeles.length - 1) continue;
+    break;
   }
   if (r.status === 429) {
     throw new HttpError(429, "Le service d'écriture est très sollicité. Réessayez dans une minute.");
@@ -250,7 +256,7 @@ async function callModel(system, user) {
   }
   const data = await r.json();
   const parties = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts;
-  const texte = Array.isArray(parties) ? parties.map(p => p.text || "").join("") : "";
+  const texte = Array.isArray(parties) ? parties.filter(p => !p.thought).map(p => p.text || "").join("") : "";
   if (!texte) throw new HttpError(502, "L'écriture n'a pas abouti. Réessayez dans un instant.");
   return texte;
 }

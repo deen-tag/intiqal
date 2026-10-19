@@ -49,7 +49,11 @@ Sans clé, le bouton affiche : "L'écriture automatique n'est pas encore activé
      Une variable d'environnement ne compte que pour les déploiements faits après son ajout.
   4. Tester : intiqal.vercel.app/creer.html > répondre à quelques questions > aller jusqu'à
      l'étape 5 > "Écrire les textes de mon livre".
-Options : GEMINI_MODEL (défaut gemini-2.5-flash), ALLOWED_ORIGINS (autres adresses autorisées).
+Options : GEMINI_MODEL (impose un modèle ; sinon le site essaie gemini-3.8-flash, puis 3.7,
+puis 3.5), ALLOWED_ORIGINS (autres adresses autorisées).
+Note : l'erreur "404 ... no longer available to new users" veut dire que Google a retiré un
+modèle ; le site passe alors au suivant. Si tout échoue, mettre dans GEMINI_MODEL le nom du
+modèle indiqué par Google dans le message d'erreur affiché sur la page.
 Limites : 15 demandes par heure et par visiteur (approximatif). Le quota gratuit de Google
 est limité ; tout visiteur peut le consommer. Pour de vrais clients, passer à un service
 payant ou hébergé en Europe en remplaçant seulement la fonction callModel() de api/ecrire.js.
