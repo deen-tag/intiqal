@@ -53,12 +53,14 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 .tpage input[type=text]{width:100%;border:1px solid rgba(38,38,31,.25);background:#fff;border-radius:11px;padding:11px 13px;color:var(--ink);outline:none;margin-bottom:8px;font-weight:600}
 .tpage textarea{min-height:120px;resize:vertical;overflow:hidden}
 .texts .btn{margin-top:18px}
+.styletxt{border:0;margin:16px 0 0;padding:0}.styletxt legend{font-size:.9rem;font-weight:700;margin-bottom:6px}.styletxt label{display:flex;gap:10px;align-items:flex-start;margin-top:8px;font-size:.95rem}.styletxt input{margin-top:4px}
 .texts .stale{color:#8a4a12;font-size:.93rem;margin-top:12px}
 .qcard{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:24px}
 .qcard h3{font-size:1.9rem;margin-bottom:14px}
 .qcard textarea{min-height:170px;resize:vertical}
 .counter{text-align:right;font-size:.88rem;color:var(--muted);margin-top:6px}
 .nudge{color:#8a4a12;font-size:.93rem;margin-top:8px}.nudge:empty{display:none}
+.example{font-size:.93rem;color:#5d5546;font-style:italic;margin-top:10px;border-left:3px solid #c9b896;padding-left:11px}
 .tip{font-size:.9rem;color:var(--muted);margin-top:10px}
 .hint{background:#e8ddca;padding:13px 15px;border-radius:10px;color:#4f4739;font-size:.97rem;margin-top:14px}
 .saved{font-size:.9rem;color:var(--muted);margin-top:14px}
@@ -156,7 +158,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 <section class="panel" data-step="2" aria-labelledby="h2s"><h2 id="h2s" tabindex="-1">Faisons remonter les bons souvenirs.</h2>
   <p class="intro" id="intro2"></p>
   <div class="meta"><div class="dots" id="dots" aria-hidden="true"></div><span class="small" id="qcount" aria-live="polite">Question 1 sur 12</span></div>
-  <div class="qcard"><h3 id="qtitle"></h3><label class="sr-only" for="answer">Votre réponse</label><textarea id="answer" maxlength="600" placeholder="Un lieu, une date, une odeur, une phrase, un détail…"></textarea><div class="counter"><span id="chars">0</span>/600</div><div class="nudge" id="nudge" aria-live="polite"></div><div class="hint" id="hint"></div><div class="tip">🎤 Sur téléphone, appuyez sur le micro de votre clavier et racontez comme à l'oral : c'est plus rapide et plus naturel.</div><div class="saved">Vos réponses sont enregistrées automatiquement dans votre navigateur.</div></div>
+  <div class="qcard"><h3 id="qtitle"></h3><label class="sr-only" for="answer">Votre réponse</label><textarea id="answer" maxlength="600" placeholder="Un lieu, une date, une odeur, une phrase, un détail…"></textarea><div class="counter"><span id="chars">0</span>/600</div><div class="nudge" id="nudge" aria-live="polite"></div><div class="hint" id="hint"></div><div class="example" id="example"></div><div class="tip">🎤 Sur téléphone, appuyez sur le micro de votre clavier et racontez comme à l'oral : c'est plus rapide et plus naturel.</div><div class="saved">Vos réponses sont enregistrées automatiquement dans votre navigateur.</div></div>
   <div class="actions"><button class="btn ghost" id="prev" type="button">← Précédent</button><div class="right"><button class="btn ghost" id="skip" type="button">Passer</button><button class="btn primary" id="next" type="button">Question suivante →</button></div></div>
 </section>
 
@@ -188,6 +190,10 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
     <p class="small">Une page par souvenir, écrite à partir de vos mots. Relisez et corrigez ce que vous voulez : rien n'est imprimé sans votre accord.</p>
     <div class="ai-note"><strong>À savoir :</strong> pour écrire les textes, vos réponses écrites (jamais vos photos) sont envoyées à un service d'intelligence artificielle (Google Gemini). Dans cette démonstration, Google peut les réutiliser pour améliorer ses produits : n'y mettez rien de confidentiel.</div>
     <div class="warn" id="textsMsg" role="status" aria-live="polite"></div>
+    <fieldset class="styletxt"><legend>Style des textes</legend>
+      <label><input type="radio" name="txtStyle" value="embelli" checked> <span><strong>Embelli</strong> : plus littéraire et sensible (sans rien inventer)</span></label>
+      <label><input type="radio" name="txtStyle" value="fidele"> <span><strong>Fidèle</strong> : au plus près de vos mots</span></label>
+    </fieldset>
     <div id="textsList"></div>
     <p class="small" id="textsHint"></p>
     <button class="btn primary" id="genTexts" type="button">✨ Écrire les textes de mon livre</button>
@@ -242,6 +248,21 @@ function isMale(){return rel==="pere"||rel==="grandpere"||(rel==="autre"&&gender
 function fill(t){const m=isMale();const n=name.trim()||"votre proche";
   return t.replaceAll("{name}",n).replaceAll("{il}",m?"il":"elle").replaceAll("{Il}",m?"Il":"Elle").replaceAll("{lui}",m?"lui":"elle")}
 
+const EXEMPLES=[
+"Chaque dimanche, {name} faisait des crêpes pour tout le monde. L'odeur remplissait la maison et les voisins finissaient toujours par passer.",
+"La petite maison du village, avec le figuier dans la cour. {name} y passait tous les étés et y racontait des histoires le soir.",
+"{name} a rencontré son meilleur ami à l'usine, le premier jour. Quarante ans plus tard, ils se téléphonent encore chaque semaine.",
+"À cinquante ans, {name} a tout quitté pour ouvrir son propre commerce. Tout le monde disait que c'était risqué, mais {il} l'a fait.",
+"{name} pouvait passer une journée entière au jardin. Dès l'aube, les mains dans la terre, {il} parlait à ses tomates.",
+"Un été, la voiture est tombée en panne en pleine montagne. On a fini la nuit chez des inconnus très accueillants, et on en rit encore.",
+"Le jour de son mariage, {name} a pleuré en voyant arriver sa sœur. Depuis l'enfance, rien ne pouvait les séparer.",
+"Un jour, {name} a cherché ses lunettes pendant une heure… elles étaient sur sa tête. On en rit à chaque réunion de famille.",
+"Quand un voisin est tombé malade, {name} lui a apporté à manger tous les soirs pendant un mois, sans rien dire à personne.",
+"« Ça va aller, on va s'arranger. » {name} le disait à chaque coup dur, avec un grand sourire.",
+"Le soir, tout le monde s'asseyait autour de {name} pour l'écouter raconter son enfance. C'est ça que je veux que les petits retiennent.",
+"Le jour où toute la famille s'est retrouvée chez {name}, quatre générations à table, et {il} a dit : « Là, tout est parfait. »"
+];
+
 /* Navigation */
 function go(n){
   document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
@@ -268,23 +289,35 @@ $("start").onclick=()=>{
 };
 
 /* Étape 2 */
+const MIN_MOTS=12;
+function nbMots(s){return (s||"").trim().split(/\s+/).filter(Boolean).length}
 function nudge(){
-  const mots=(answers[q]||"").trim().split(/\s+/).filter(Boolean).length;
-  $("nudge").textContent=mots>0&&mots<12?"Une phrase de plus ? Où c'était, avec qui, ce qui s'est passé.":"";
+  const mots=nbMots(answers[q]);
+  $("nudge").textContent=mots>0&&mots<MIN_MOTS?"Encore quelques mots ("+mots+"/"+MIN_MOTS+") : où c'était, avec qui, ce qui s'est passé.":"";
 }
 function renderQ(){
   $("intro2").textContent=fill("Vous pouvez répondre seul ou, mieux, poser chaque question à {name} et noter ses mots. Pas besoin d'écrire un beau texte : quelques phrases suffisent (où c'était, avec qui, ce qui s'est passé). Plus vous racontez, plus le livre sera personnel.");
   $("qtitle").textContent=fill(QUESTIONS[q].q);
   $("hint").textContent="💡 "+fill(QUESTIONS[q].sub);
+  $("example").textContent="Exemple : « "+fill(EXEMPLES[q])+" »";
   $("answer").value=answers[q];$("chars").textContent=answers[q].length;nudge();
   $("qcount").textContent="Question "+(q+1)+" sur "+N;
   $("next").textContent=q===N-1?"Continuer →":"Question suivante →";
   $("dots").innerHTML=QUESTIONS.map((_,i)=>`<i class="dot ${i===q?"current":answers[i].trim()?"done":""}"></i>`).join("");
 }
 $("answer").oninput=e=>{answers[q]=e.target.value;store.set("intiqal_answers",answers);$("chars").textContent=e.target.value.length;nudge()};
-function nextQ(){if(q<N-1){q++;renderQ();$("answer").focus({preventScroll:true})}else go(3)}
+function advance(){if(q<N-1){q++;renderQ();$("answer").focus({preventScroll:true})}else go(3)}
+function nextQ(){
+  const mots=nbMots(answers[q]);
+  if(mots>0&&mots<MIN_MOTS){
+    $("nudge").textContent="Encore un peu : au moins "+MIN_MOTS+" mots pour que cette page du livre soit belle (vous en avez "+mots+"). Vous pouvez aussi appuyer sur « Passer ».";
+    $("answer").focus({preventScroll:true});
+    return;
+  }
+  advance();
+}
 $("next").onclick=nextQ;
-$("skip").onclick=nextQ;
+$("skip").onclick=advance;
 $("prev").onclick=()=>{if(q>0){q--;renderQ()}else go(1)};
 
 /* Étape 3 : photos réduites, conservées dans le navigateur */
@@ -352,6 +385,7 @@ $("order").onclick=()=>go(6);
 let texts=store.get("intiqal_texts",null);
 if(!texts||typeof texts!=="object"||!Array.isArray(texts.pages))texts=null;
 function signature(){return JSON.stringify([name.trim(),rel,gender,answers])}
+function styleTxt(){const r=document.querySelector('input[name="txtStyle"]:checked');return r&&r.value==="fidele"?"fidele":"embelli"}
 function askItems(){
   const items=[];
   answers.forEach((a,i)=>{if(a.trim())items.push({i,q:fill(QUESTIONS[i].q),a:a.trim()})});
@@ -369,7 +403,7 @@ function field(labelText,id,value,multi,onInput){
 }
 function renderHint(){
   const h=$("textsHint");
-  const courtes=askItems().filter(it=>it.a.split(/\s+/).length<12).map(it=>"« "+it.q+" »");
+  const courtes=askItems().filter(it=>nbMots(it.a)<MIN_MOTS).map(it=>"« "+it.q+" »");
   h.textContent=courtes.length?"Astuce : vos réponses à "+courtes.join(", ")+" sont très courtes. Avec une ou deux phrases de plus (où, quand, ce qui s'est passé), les textes seront bien plus vivants. Vous pouvez revenir les compléter, puis réécrire.":"";
 }
 function renderTexts(){
@@ -399,7 +433,7 @@ $("genTexts").onclick=async()=>{
   msg.textContent="";btn.disabled=true;const old=btn.textContent;btn.textContent="Écriture en cours…";
   try{
     const r=await fetch("/api/ecrire",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({name:name.trim(),rel,gender:isMale()?"m":"f",items})});
+      body:JSON.stringify({name:name.trim(),rel,gender:isMale()?"m":"f",style:styleTxt(),items})});
     let data=null;try{data=await r.json()}catch(_){}
     if(!r.ok||!data||!Array.isArray(data.pages))throw new Error((data&&data.error)||("Le serveur a répondu avec une erreur (code "+r.status+"). Réessayez dans un instant."));
     texts={intro:data.intro,pages:data.pages,fin:data.fin,sig:signature()};

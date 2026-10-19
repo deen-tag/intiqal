@@ -16,6 +16,11 @@ Dernière mise à jour de ce fichier : 18 octobre 2026 (ajout de l'écriture des
   son prénom, le lien et ses réponses écrites (jamais les photos) sont envoyés à l'IA
   (Google Gemini, offre gratuite) via api/ecrire.js. Rien n'est enregistré sur le serveur.
   Attention : avec l'offre gratuite, Google peut réutiliser ces textes. Démo uniquement.
+- Questions : un exemple de réponse est affiché sous chacune ; minimum de 12 mots par réponse
+  pour passer à la suivante (le bouton "Passer" permet de sauter une question).
+- Textes IA : une page par question. Deux styles au choix à l'étape 5 : "Embelli" (par défaut,
+  plus littéraire) ou "Fidèle" (au plus près des mots). Dans les deux cas l'IA n'ajoute aucun
+  fait (nom, lieu, date, événement) absent des réponses : seule la forme est embellie.
 - Offre affichée : livre relié de 15 pages, 4 styles, 3 à 10 photos,
   à partir de 29 EUR + 4,90 EUR de livraison.
 - En ligne : https://intiqal.vercel.app (déployé depuis GitHub deen-tag/intiqal).
