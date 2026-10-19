@@ -203,9 +203,12 @@ module.exports = async function handler(req, res) {
 // On essaie donc plusieurs modèles dans l'ordre ; GEMINI_MODEL permet d'en imposer un.
 const MODELES_PAR_DEFAUT = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash"];
 
-async function appelerModele(modele, cle, system, user) {
+async function appelerModele(modele, cle, system, user, reflexionCourte) {
+  const generationConfig = { temperature: 0.7, maxOutputTokens: 8000, responseMimeType: "application/json" };
+  // Les modèles Gemini 3 "réfléchissent" longtemps par défaut : on limite pour répondre vite.
+  if (reflexionCourte && /^gemini-3/.test(modele)) generationConfig.thinkingConfig = { thinkingLevel: "low" };
   const ctrl = new AbortController();
-  const minuteur = setTimeout(() => ctrl.abort(), 25000);
+  const minuteur = setTimeout(() => ctrl.abort(), 50000);
   try {
     return await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(modele) + ":generateContent",
@@ -215,13 +218,17 @@ async function appelerModele(modele, cle, system, user) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: system }] },
           contents: [{ role: "user", parts: [{ text: user }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 8000, responseMimeType: "application/json" }
+          generationConfig
         }),
         signal: ctrl.signal
       }
     );
   } catch (e) {
-    throw new HttpError(504, "Le service d'écriture ne répond pas. Réessayez dans un instant.");
+    if (e && e.name === "AbortError") {
+      throw new HttpError(504, "Le service d'écriture a mis trop de temps à répondre. Réessayez dans un instant.");
+    }
+    console.error("gemini réseau", e && e.message);
+    throw new HttpError(504, "Impossible de joindre le service d'écriture. Réessayez dans un instant.");
   } finally {
     clearTimeout(minuteur);
   }
@@ -234,7 +241,9 @@ async function callModel(system, user) {
 
   let r;
   for (let k = 0; k < modeles.length; k++) {
-    r = await appelerModele(modeles[k], cle, system, user);
+    r = await appelerModele(modeles[k], cle, system, user, true);
+    // Si Google refuse le réglage de réflexion (400), on réessaie sans.
+    if (r.status === 400) r = await appelerModele(modeles[k], cle, system, user, false);
     if (r.status === 404 && k < modeles.length - 1) continue;
     break;
   }

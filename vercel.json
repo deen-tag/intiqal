@@ -1,5 +1,5 @@
 {
   "functions": {
-    "api/ecrire.js": { "maxDuration": 30 }
+    "api/ecrire.js": { "maxDuration": 60 }
   }
 }
