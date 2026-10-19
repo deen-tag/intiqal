@@ -51,7 +51,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 .tpage{margin-top:16px}
 .tpage label{display:block;font-size:.9rem;font-weight:700;color:var(--ink);margin-bottom:6px}
 .tpage input[type=text]{width:100%;border:1px solid rgba(38,38,31,.25);background:#fff;border-radius:11px;padding:11px 13px;color:var(--ink);outline:none;margin-bottom:8px;font-weight:600}
-.tpage textarea{min-height:120px;resize:vertical}
+.tpage textarea{min-height:120px;resize:vertical;overflow:hidden}
 .texts .btn{margin-top:18px}
 .texts .stale{color:#8a4a12;font-size:.93rem;margin-top:12px}
 .qcard{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:24px}
@@ -313,19 +313,20 @@ $("back3").onclick=()=>{q=N-1;go(2)};$("photoNext").onclick=()=>go(4);
 /* Étape 4 */
 function renderStyles(){
   const n=name.trim()||"votre proche";
-  document.querySelectorAll(".swatch .sw").forEach(s=>{s.textContent="";s.append("L'Histoire",document.createElement("br"),"de "+n)});
+  document.querySelectorAll(".swatch .sw").forEach(s=>{s.textContent="";s.append("L'Histoire",document.createElement("br"),de(n))});
   document.querySelectorAll('input[name="style"]').forEach(r=>r.checked=r.value===style);
 }
 document.querySelectorAll('input[name="style"]').forEach(r=>r.onchange=()=>{style=r.value;store.set("intiqal_style",style)});
 $("back4").onclick=()=>go(3);$("to5").onclick=()=>go(5);
 
 /* Étape 5 */
+function de(n){return /^[aeiouyàâäéèêëîïôöùûüœ]/i.test(n)?"d'"+n:"de "+n}
 function answered(){return answers.filter(a=>a.trim()).length}
 function renderPreview(){
   const n=name.trim()||"votre proche";
-  $("previewTitle").textContent="L'Histoire de "+n;
+  $("previewTitle").textContent="L'Histoire "+de(n);
   const c=$("cover");c.className="cover "+style;c.textContent="";
-  const d=document.createElement("div");d.append("L'Histoire",document.createElement("br"),"de "+n);
+  const d=document.createElement("div");d.append("L'Histoire",document.createElement("br"),de(n));
   const leaf=document.createElement("div");leaf.className="leaf";leaf.textContent="✦";d.append(leaf);c.append(d);
   const a=answered();
   $("metaPreview").textContent=STYLES[style]+" · "+a+" réponse"+(a>1?"s":"")+" sur "+N+" · "+photos.length+" photo"+(photos.length>1?"s":"");
@@ -349,13 +350,14 @@ function askItems(){
   answers.forEach((a,i)=>{if(a.trim())items.push({i,q:fill(QUESTIONS[i].q),a:a.trim()})});
   return items;
 }
+function autosizeEl(t){t.style.height="auto";t.style.height=(t.scrollHeight+4)+"px"}
 function field(labelText,id,value,multi,onInput){
   const wrap=document.createElement("div");wrap.className="tpage";
   const lab=document.createElement("label");lab.htmlFor=id;lab.textContent=labelText;wrap.append(lab);
   const el=document.createElement(multi?"textarea":"input");
   if(!multi)el.type="text";
   el.id=id;el.value=value||"";el.maxLength=multi?900:80;
-  el.addEventListener("input",()=>{onInput(el.value);store.set("intiqal_texts",texts)});
+  el.addEventListener("input",()=>{onInput(el.value);store.set("intiqal_texts",texts);if(multi)autosizeEl(el)});
   wrap.append(el);return wrap;
 }
 function renderTexts(){
@@ -374,6 +376,7 @@ function renderTexts(){
     box.append(field("Texte de la page "+(k+1),"t_texte"+k,p.texte,true,v=>{p.texte=v}));
   });
   if(texts.fin!==undefined)box.append(field("Phrase de fin","t_fin",texts.fin,true,v=>{texts.fin=v}));
+  setTimeout(()=>box.querySelectorAll("textarea").forEach(autosizeEl),0);
 }
 $("genTexts").onclick=async()=>{
   const msg=$("textsMsg"),btn=$("genTexts");

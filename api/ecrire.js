@@ -113,6 +113,7 @@ function consigne(d) {
     "- Écris à la troisième personne (" + il + "), en employant le prénom " + d.nom + ". Ton chaleureux, simple et sincère, phrases courtes, sans emphase ni cliché.",
     "- Utilise UNIQUEMENT les faits donnés dans les réponses. N'invente aucun nom, lieu, date, événement ni émotion qui ne soit pas mentionné. Si un détail manque, reste général plutôt que d'inventer.",
     "- Garde autant que possible les expressions et le vocabulaire de la personne qui répond.",
+    "- Ne reprends pas la formulation des questions dans les textes (pas de « Parmi les souvenirs qui… », « Quand on pense à… »). Entre directement dans le souvenir par un fait concret donné dans la réponse.",
     "- Un texte par réponse, de 40 à 90 mots, proportionnel à la longueur de la réponse : réponse courte, texte court, sans délayer.",
     "- Un titre court (3 à 6 mots) par page.",
     "- Une phrase de dédicace d'ouverture (champ intro, 15 à 30 mots) et une phrase de fin (champ fin, 10 à 25 mots), sans inventer de faits.",
