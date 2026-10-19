@@ -58,6 +58,8 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 .qcard h3{font-size:1.9rem;margin-bottom:14px}
 .qcard textarea{min-height:170px;resize:vertical}
 .counter{text-align:right;font-size:.88rem;color:var(--muted);margin-top:6px}
+.nudge{color:#8a4a12;font-size:.93rem;margin-top:8px}.nudge:empty{display:none}
+.tip{font-size:.9rem;color:var(--muted);margin-top:10px}
 .hint{background:#e8ddca;padding:13px 15px;border-radius:10px;color:#4f4739;font-size:.97rem;margin-top:14px}
 .saved{font-size:.9rem;color:var(--muted);margin-top:14px}
 
@@ -154,7 +156,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 <section class="panel" data-step="2" aria-labelledby="h2s"><h2 id="h2s" tabindex="-1">Faisons remonter les bons souvenirs.</h2>
   <p class="intro" id="intro2"></p>
   <div class="meta"><div class="dots" id="dots" aria-hidden="true"></div><span class="small" id="qcount" aria-live="polite">Question 1 sur 12</span></div>
-  <div class="qcard"><h3 id="qtitle"></h3><label class="sr-only" for="answer">Votre réponse</label><textarea id="answer" maxlength="600" placeholder="Un lieu, une date, une odeur, une phrase, un détail…"></textarea><div class="counter"><span id="chars">0</span>/600</div><div class="hint" id="hint"></div><div class="saved">Vos réponses sont enregistrées automatiquement dans votre navigateur.</div></div>
+  <div class="qcard"><h3 id="qtitle"></h3><label class="sr-only" for="answer">Votre réponse</label><textarea id="answer" maxlength="600" placeholder="Un lieu, une date, une odeur, une phrase, un détail…"></textarea><div class="counter"><span id="chars">0</span>/600</div><div class="nudge" id="nudge" aria-live="polite"></div><div class="hint" id="hint"></div><div class="tip">🎤 Sur téléphone, appuyez sur le micro de votre clavier et racontez comme à l'oral : c'est plus rapide et plus naturel.</div><div class="saved">Vos réponses sont enregistrées automatiquement dans votre navigateur.</div></div>
   <div class="actions"><button class="btn ghost" id="prev" type="button">← Précédent</button><div class="right"><button class="btn ghost" id="skip" type="button">Passer</button><button class="btn primary" id="next" type="button">Question suivante →</button></div></div>
 </section>
 
@@ -187,6 +189,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
     <div class="ai-note"><strong>À savoir :</strong> pour écrire les textes, vos réponses écrites (jamais vos photos) sont envoyées à un service d'intelligence artificielle (Google Gemini). Dans cette démonstration, Google peut les réutiliser pour améliorer ses produits : n'y mettez rien de confidentiel.</div>
     <div class="warn" id="textsMsg" role="status" aria-live="polite"></div>
     <div id="textsList"></div>
+    <p class="small" id="textsHint"></p>
     <button class="btn primary" id="genTexts" type="button">✨ Écrire les textes de mon livre</button>
   </div>
   <div class="summary"><div class="row"><span>Le livre souvenir</span><span>29,00 €</span></div><div class="row"><span>Exemplaires</span><span class="qty"><button id="minus" type="button" aria-label="Moins d'exemplaires">−</button><b id="qty" aria-live="polite">1</b><button id="plus" type="button" aria-label="Plus d'exemplaires">+</button></span></div><div class="row"><span>Livraison</span><span>4,90 €</span></div><div class="row total"><span>Total</span><span id="total">33,90 €</span></div></div>
@@ -265,16 +268,20 @@ $("start").onclick=()=>{
 };
 
 /* Étape 2 */
+function nudge(){
+  const mots=(answers[q]||"").trim().split(/\s+/).filter(Boolean).length;
+  $("nudge").textContent=mots>0&&mots<12?"Une phrase de plus ? Où c'était, avec qui, ce qui s'est passé.":"";
+}
 function renderQ(){
-  $("intro2").textContent=fill("Vous pouvez répondre seul ou, mieux, poser chaque question à {name} et noter ses mots. Pas besoin d'écrire un beau texte : un lieu, une date, une odeur, une phrase… même quelques mots peuvent suffire.");
+  $("intro2").textContent=fill("Vous pouvez répondre seul ou, mieux, poser chaque question à {name} et noter ses mots. Pas besoin d'écrire un beau texte : quelques phrases suffisent (où c'était, avec qui, ce qui s'est passé). Plus vous racontez, plus le livre sera personnel.");
   $("qtitle").textContent=fill(QUESTIONS[q].q);
   $("hint").textContent="💡 "+fill(QUESTIONS[q].sub);
-  $("answer").value=answers[q];$("chars").textContent=answers[q].length;
+  $("answer").value=answers[q];$("chars").textContent=answers[q].length;nudge();
   $("qcount").textContent="Question "+(q+1)+" sur "+N;
   $("next").textContent=q===N-1?"Continuer →":"Question suivante →";
   $("dots").innerHTML=QUESTIONS.map((_,i)=>`<i class="dot ${i===q?"current":answers[i].trim()?"done":""}"></i>`).join("");
 }
-$("answer").oninput=e=>{answers[q]=e.target.value;store.set("intiqal_answers",answers);$("chars").textContent=e.target.value.length};
+$("answer").oninput=e=>{answers[q]=e.target.value;store.set("intiqal_answers",answers);$("chars").textContent=e.target.value.length;nudge()};
 function nextQ(){if(q<N-1){q++;renderQ();$("answer").focus({preventScroll:true})}else go(3)}
 $("next").onclick=nextQ;
 $("skip").onclick=nextQ;
@@ -360,8 +367,14 @@ function field(labelText,id,value,multi,onInput){
   el.addEventListener("input",()=>{onInput(el.value);store.set("intiqal_texts",texts);if(multi)autosizeEl(el)});
   wrap.append(el);return wrap;
 }
+function renderHint(){
+  const h=$("textsHint");
+  const courtes=askItems().filter(it=>it.a.split(/\s+/).length<12).map(it=>"« "+it.q+" »");
+  h.textContent=courtes.length?"Astuce : vos réponses à "+courtes.join(", ")+" sont très courtes. Avec une ou deux phrases de plus (où, quand, ce qui s'est passé), les textes seront bien plus vivants. Vous pouvez revenir les compléter, puis réécrire.":"";
+}
 function renderTexts(){
   const box=$("textsList");box.textContent="";
+  renderHint();
   const btn=$("genTexts");
   if(!texts){btn.textContent="✨ Écrire les textes de mon livre";return}
   btn.textContent="↻ Réécrire les textes";
