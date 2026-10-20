@@ -259,13 +259,13 @@ body.book-open{overflow:hidden}
     <h3>Les textes de votre livre</h3>
     <p class="small">Une page par souvenir, écrite à partir de vos mots. Relisez et corrigez ce que vous voulez : rien n'est imprimé sans votre accord.</p>
     <div class="ai-note"><strong>À savoir :</strong> pour écrire les textes, vos réponses écrites (jamais vos photos) sont envoyées à un service d'intelligence artificielle (Google Gemini). Dans cette démonstration, Google peut les réutiliser pour améliorer ses produits : n'y mettez rien de confidentiel.</div>
-    <div class="warn" id="textsMsg" role="status" aria-live="polite"></div>
     <fieldset class="styletxt"><legend>Style des textes</legend>
       <label><input type="radio" name="txtStyle" value="embelli" checked> <span><strong>Embelli</strong> : plus littéraire et sensible (sans rien inventer)</span></label>
       <label><input type="radio" name="txtStyle" value="fidele"> <span><strong>Fidèle</strong> : au plus près de vos mots</span></label>
     </fieldset>
     <div id="textsList"></div>
     <p class="small" id="textsHint"></p>
+    <div class="warn" id="textsMsg" role="status" aria-live="polite"></div>
     <button class="btn primary" id="genTexts" type="button">Écrire les textes de mon livre</button>
     <button class="btn ghost" id="openBook2" type="button">Feuilleter mon livre</button>
   </div>
@@ -518,7 +518,7 @@ $("genTexts").onclick=async()=>{
     if(!r.ok||!data||!Array.isArray(data.pages))throw new Error((data&&data.error)||("Le serveur a répondu avec une erreur (code "+r.status+"). Réessayez dans un instant."));
     texts={intro:data.intro,pages:data.pages,fin:data.fin,sig:signature()};
     store.set("intiqal_texts",texts);
-    msg.textContent="Voilà ! Relisez et corrigez ce que vous voulez, puis feuilletez votre livre.";
+    msg.textContent="Textes réécrits à "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})+". Relisez et corrigez ce que vous voulez, puis feuilletez votre livre.";
     renderTexts();
   }catch(e){
     msg.textContent=e&&e.message?e.message:"Une erreur est survenue. Réessayez dans un instant.";
