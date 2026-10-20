@@ -58,14 +58,14 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 
 .bookcta{margin:14px 0 0;text-align:center}
 body.book-open{overflow:hidden}
-.book-overlay{position:fixed;inset:0;z-index:100;background:rgba(30,28,24,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:14px}
+.book-overlay{position:fixed;inset:0;z-index:100;background:#1b1915;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:14px}
 .book-overlay[hidden]{display:none}
 .book-top,.book-nav{width:min(92vw,420px);display:flex;justify-content:space-between;align-items:center;color:#f3eee3;font-size:.95rem}
 .book-top button,.book-nav button{background:none;border:1px solid rgba(255,255,255,.35);color:#f3eee3;border-radius:999px;padding:10px 18px;font:inherit;cursor:pointer}
 .book-nav button:disabled{opacity:.35;cursor:default}
 .book-note{margin:0;font-size:.8rem;color:#b9b2a2;text-align:center;max-width:92vw}
-.book-stage{position:relative;height:min(calc(100dvh - 190px),calc(92vw * 1.3333),560px);aspect-ratio:3/4;perspective:1600px;touch-action:pan-y}
-.pg{position:absolute;inset:0;border-radius:4px 10px 10px 4px;box-shadow:0 18px 40px rgba(0,0,0,.4);transform-origin:left center;transition:transform .75s cubic-bezier(.45,.05,.25,1);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;padding:28px 26px 38px;color:#26261f;overflow:hidden}
+.book-stage{border-radius:4px 10px 10px 4px;box-shadow:0 16px 36px rgba(0,0,0,.5);position:relative;height:min(calc(100dvh - 190px),calc(92vw * 1.3333),560px);aspect-ratio:3/4;perspective:1600px;touch-action:pan-y}
+.pg{position:absolute;inset:0;border-radius:4px 10px 10px 4px;transform-origin:left center;transition:transform .75s cubic-bezier(.45,.05,.25,1);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;padding:28px 26px 38px;color:#26261f;overflow:hidden}
 .pg:not(.cover-p){background:#fbf8f1}
 .pg.flipped{transform:rotateY(-178deg)}
 .pg .num{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:.8rem;color:#8d8573}
@@ -73,6 +73,10 @@ body.book-open{overflow:hidden}
 .pg .pbody{font-family:var(--serif);font-size:1.2rem;line-height:1.55;overflow:auto;white-space:pre-line;font-weight:500}
 .pg.cover-p{align-items:center;justify-content:center;text-align:center;font-family:var(--serif);font-size:2.4rem;line-height:1}
 .pg.cover-p .leaf{font-size:1.3rem;margin-top:16px;opacity:.85}
+.pg.memoire.short{justify-content:center}
+.pg.memoire.short .ptitle{text-align:center;font-size:1.9rem;margin-bottom:0}
+.pg.memoire.short .ptitle::after{content:"";display:block;width:38px;height:1px;background:#b9ae95;margin:16px auto 18px}
+.pg.memoire.short .pbody{text-align:center;font-size:1.45rem;overflow:visible}
 .pg.dedic{justify-content:center;text-align:center}
 .pg.dedic .pbody{font-style:italic;font-size:1.4rem}
 .pg.photo-p{padding:22px 22px 38px;justify-content:center}
@@ -556,7 +560,7 @@ function bookPageEl(m,i,total){
     if(typeof m.src==="string"&&m.src.startsWith("data:image/")){const im=document.createElement("img");im.src=m.src;im.alt="Photo de votre livre";d.append(im)}
     d.append(num);return d;
   }
-  d.className="pg "+(m.kind==="dedic"?"dedic":m.kind==="end"?"endp":"memoire");
+  d.className="pg "+(m.kind==="dedic"?"dedic":m.kind==="end"?"endp":"memoire"+((m.texte||"").length<180?" short":""));
   if(m.titre){const h=document.createElement("h3");h.className="ptitle";h.textContent=m.titre;d.append(h)}
   const b=document.createElement("div");b.className="pbody";b.textContent=m.texte;d.append(b,num);
   return d;
