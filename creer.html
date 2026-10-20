@@ -55,6 +55,31 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 .texts .btn{margin-top:18px}
 .styletxt{border:0;margin:16px 0 0;padding:0}.styletxt legend{font-size:.9rem;font-weight:700;margin-bottom:6px}.styletxt label{display:flex;gap:10px;align-items:flex-start;margin-top:8px;font-size:.95rem}.styletxt input{margin-top:4px}
 .texts .stale{color:#8a4a12;font-size:.93rem;margin-top:12px}
+
+.bookcta{margin:14px 0 0;text-align:center}
+body.book-open{overflow:hidden}
+.book-overlay{position:fixed;inset:0;z-index:100;background:rgba(30,28,24,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:14px}
+.book-overlay[hidden]{display:none}
+.book-top,.book-nav{width:min(92vw,420px);display:flex;justify-content:space-between;align-items:center;color:#f3eee3;font-size:.95rem}
+.book-top button,.book-nav button{background:none;border:1px solid rgba(255,255,255,.35);color:#f3eee3;border-radius:999px;padding:10px 18px;font:inherit;cursor:pointer}
+.book-nav button:disabled{opacity:.35;cursor:default}
+.book-note{margin:0;font-size:.8rem;color:#b9b2a2;text-align:center;max-width:92vw}
+.book-stage{position:relative;height:min(calc(100dvh - 190px),calc(92vw * 1.3333),560px);aspect-ratio:3/4;perspective:1600px;touch-action:pan-y}
+.pg{position:absolute;inset:0;border-radius:4px 10px 10px 4px;box-shadow:0 18px 40px rgba(0,0,0,.4);transform-origin:left center;transition:transform .75s cubic-bezier(.45,.05,.25,1);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;padding:28px 26px 38px;color:#26261f;overflow:hidden}
+.pg:not(.cover-p){background:#fbf8f1}
+.pg.flipped{transform:rotateY(-178deg)}
+.pg .num{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:.8rem;color:#8d8573}
+.pg .ptitle{font-family:var(--serif);font-size:1.7rem;line-height:1.1;margin:0 0 14px;font-weight:500}
+.pg .pbody{font-family:var(--serif);font-size:1.2rem;line-height:1.55;overflow:auto;white-space:pre-line;font-weight:500}
+.pg.cover-p{align-items:center;justify-content:center;text-align:center;font-family:var(--serif);font-size:2.4rem;line-height:1}
+.pg.cover-p .leaf{font-size:1.3rem;margin-top:16px;opacity:.85}
+.pg.dedic{justify-content:center;text-align:center}
+.pg.dedic .pbody{font-style:italic;font-size:1.4rem}
+.pg.photo-p{padding:22px 22px 38px;justify-content:center}
+.pg.photo-p img{width:100%;height:100%;object-fit:contain;border-radius:4px;background:#efe9dc}
+.pg.endp{justify-content:center;text-align:center}
+.pg.endp .pbody{font-style:italic;font-size:1.3rem}
+@media (prefers-reduced-motion:reduce){.pg{transition:none}}
 .qpage{margin-top:6px}
 .qticks{display:flex;gap:4px;margin-bottom:10px}
 .qticks i{flex:1;height:3px;border-radius:2px;background:#e3dccd}
@@ -224,7 +249,8 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 
 <section class="panel" data-step="5" aria-labelledby="h5s"><h2 id="h5s" tabindex="-1">Votre histoire prend forme.</h2>
   <p class="intro">Voici une première vue de votre création. Vous pourrez encore modifier vos choix.</p>
-  <div class="preview"><div class="cover s1" id="cover"></div><div><h3 id="previewTitle"></h3><p class="small" id="metaPreview"></p><p class="small" style="margin-top:14px">15 pages · création personnalisée · choix modifiables avant commande.</p><div class="empty-warn" id="emptyWarn" hidden>Vous n'avez répondu à aucune question. <button type="button" id="toQ">Revenir aux questions</button></div></div></div>
+  <div class="preview"><div class="cover s1" id="cover"></div><div><h3 id="previewTitle"></h3><p class="small" id="metaPreview"></p><p class="small" style="margin-top:14px">15 pages + 1 page par photo · création personnalisée · choix modifiables avant commande.</p><div class="empty-warn" id="emptyWarn" hidden>Vous n'avez répondu à aucune question. <button type="button" id="toQ">Revenir aux questions</button></div></div></div>
+  <p class="bookcta"><button class="btn ghost" id="openBook" type="button">Feuilleter mon livre</button></p>
   <div class="texts" id="textsBox">
     <h3>Les textes de votre livre</h3>
     <p class="small">Une page par souvenir, écrite à partir de vos mots. Relisez et corrigez ce que vous voulez : rien n'est imprimé sans votre accord.</p>
@@ -251,6 +277,12 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 </div></section>
 </main>
 
+<div class="book-overlay" id="bookOverlay" hidden role="dialog" aria-modal="true" aria-label="Feuilleter mon livre">
+  <div class="book-top"><span id="bookPos">1 / 1</span><button type="button" id="bookClose">Fermer</button></div>
+  <div class="book-stage" id="bookStage"></div>
+  <div class="book-nav"><button type="button" id="bookPrev">← Précédente</button><button type="button" id="bookNext">Suivante →</button></div>
+  <p class="book-note">Aperçu : la mise en page et le papier du livre final peuvent différer.</p>
+</div>
 <script>
 const $=id=>document.getElementById(id);
 const store={
@@ -412,7 +444,7 @@ function renderPreview(){
   const d=document.createElement("div");d.append("L'Histoire",document.createElement("br"),de(n));
   const leaf=document.createElement("div");leaf.className="leaf";leaf.textContent="✦";d.append(leaf);c.append(d);
   const a=answered();
-  $("metaPreview").textContent=STYLES[style]+" · "+a+" réponse"+(a>1?"s":"")+" sur "+N+" · "+photos.length+" photo"+(photos.length>1?"s":"");
+  $("metaPreview").textContent=STYLES[style]+" · "+a+" réponse"+(a>1?"s":"")+" sur "+N+" · "+photos.length+" photo"+(photos.length>1?"s":"")+" · "+bookModel().length+" pages";
   $("emptyWarn").hidden=a>0;
   updateTotal();
 }
@@ -488,6 +520,80 @@ $("genTexts").onclick=async()=>{
     btn.textContent=old;
   }finally{btn.disabled=false}
 };
+
+
+/* Feuilleter le livre : aperçu avec les réponses, les textes et une page par photo */
+let bookEls=[],bookCur=0,bookOpener=null;
+function bookModel(){
+  const n=name.trim()||"votre proche";
+  const out=[{kind:"cover"},{kind:"dedic",texte:(texts&&texts.intro)||("Pour "+n+", avec tout notre amour.")}];
+  const mem=[];
+  answers.forEach((a,i)=>{
+    if(!a.trim())return;
+    const p=texts&&texts.pages.find(x=>x.i===i);
+    mem.push({kind:"memoire",titre:(p&&p.titre)||fill(QUESTIONS[i].q),texte:(p&&p.texte)||a.trim()});
+  });
+  const M=mem.length,P=photos.length;
+  const after=photos.map((_,j)=>M?Math.min(M-1,Math.max(0,Math.round((j+1)*M/(P+1))-1)):-1);
+  if(!M)photos.forEach(src=>out.push({kind:"photo",src}));
+  mem.forEach((m,k)=>{out.push(m);photos.forEach((src,j)=>{if(after[j]===k)out.push({kind:"photo",src})})});
+  out.push({kind:"end",texte:(texts&&texts.fin)||("Merci, "+n+", pour toutes ces histoires.")});
+  return out;
+}
+function bookPageEl(m,i,total){
+  const d=document.createElement("div");
+  const num=document.createElement("div");num.className="num";num.textContent=i+1;
+  if(m.kind==="cover"){
+    d.className="pg cover-p "+style;
+    const n=name.trim()||"votre proche";
+    const t=document.createElement("div");t.append("L'Histoire",document.createElement("br"),de(n));
+    const leaf=document.createElement("div");leaf.className="leaf";leaf.textContent="✦";
+    t.append(leaf);d.append(t);return d;
+  }
+  if(m.kind==="photo"){
+    d.className="pg photo-p";
+    if(typeof m.src==="string"&&m.src.startsWith("data:image/")){const im=document.createElement("img");im.src=m.src;im.alt="Photo de votre livre";d.append(im)}
+    d.append(num);return d;
+  }
+  d.className="pg "+(m.kind==="dedic"?"dedic":m.kind==="end"?"endp":"memoire");
+  if(m.titre){const h=document.createElement("h3");h.className="ptitle";h.textContent=m.titre;d.append(h)}
+  const b=document.createElement("div");b.className="pbody";b.textContent=m.texte;d.append(b,num);
+  return d;
+}
+function bookGo(n){
+  bookCur=Math.max(0,Math.min(bookEls.length-1,n));
+  bookEls.forEach((p,i)=>{p.classList.toggle("flipped",i<bookCur);p.setAttribute("aria-hidden",i===bookCur?"false":"true")});
+  $("bookPos").textContent=(bookCur+1)+" / "+bookEls.length;
+  $("bookPrev").disabled=bookCur===0;$("bookNext").disabled=bookCur===bookEls.length-1;
+}
+function openBook(){
+  const model=bookModel(),stage=$("bookStage");stage.textContent="";
+  bookEls=model.map((m,i)=>{const el=bookPageEl(m,i,model.length);el.style.zIndex=model.length-i;stage.append(el);return el});
+  bookOpener=document.activeElement;
+  $("bookOverlay").hidden=false;document.body.classList.add("book-open");
+  bookGo(0);$("bookClose").focus();
+}
+function closeBook(){
+  $("bookOverlay").hidden=true;document.body.classList.remove("book-open");
+  if(bookOpener&&bookOpener.focus)bookOpener.focus();
+}
+$("openBook").onclick=openBook;
+$("bookClose").onclick=closeBook;
+$("bookPrev").onclick=()=>bookGo(bookCur-1);
+$("bookNext").onclick=()=>bookGo(bookCur+1);
+document.addEventListener("keydown",e=>{
+  if($("bookOverlay").hidden)return;
+  if(e.key==="Escape")closeBook();
+  else if(e.key==="ArrowRight")bookGo(bookCur+1);
+  else if(e.key==="ArrowLeft")bookGo(bookCur-1);
+});
+let bookTx=null;
+$("bookStage").addEventListener("touchstart",e=>{bookTx=e.touches[0].clientX},{passive:true});
+$("bookStage").addEventListener("touchend",e=>{
+  if(bookTx===null)return;
+  const dx=e.changedTouches[0].clientX-bookTx;bookTx=null;
+  if(Math.abs(dx)>40)bookGo(bookCur+(dx<0?1:-1));
+});
 
 /* Étape 6 */
 $("back6").onclick=()=>go(5);

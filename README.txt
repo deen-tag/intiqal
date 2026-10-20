@@ -24,6 +24,11 @@ Dernière mise à jour de ce fichier : 18 octobre 2026 (ajout de l'écriture des
 - Textes IA : une page par question. Deux styles au choix à l'étape 5 : "Embelli" (par défaut,
   plus littéraire) ou "Fidèle" (au plus près des mots). Dans les deux cas l'IA n'ajoute aucun
   fait (nom, lieu, date, événement) absent des réponses : seule la forme est embellie.
+- Aperçu du livre : bouton "Feuilleter mon livre" à l'étape 5 (pages qui se tournent, glisser
+  ou boutons). Pages : couverture, dédicace, une page par réponse (texte IA si généré, sinon les
+  mots du client), UNE PAGE PAR PHOTO (photo seule, sans texte, répartie dans le livre), page de
+  fin. Soit 15 pages + 1 page par photo (18 à 25 pages). Le prix "dès 29 EUR" est à revoir avec le
+  coût réel d'impression quand le nombre de pages varie.
 - Offre affichée : livre relié de 15 pages, 4 styles, 3 à 10 photos,
   à partir de 29 EUR + 4,90 EUR de livraison.
 - En ligne : https://intiqal.vercel.app (déployé depuis GitHub deen-tag/intiqal).
