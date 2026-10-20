@@ -55,12 +55,38 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 .texts .btn{margin-top:18px}
 .styletxt{border:0;margin:16px 0 0;padding:0}.styletxt legend{font-size:.9rem;font-weight:700;margin-bottom:6px}.styletxt label{display:flex;gap:10px;align-items:flex-start;margin-top:8px;font-size:.95rem}.styletxt input{margin-top:4px}
 .texts .stale{color:#8a4a12;font-size:.93rem;margin-top:12px}
-.qcard{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:24px}
+.qpage{margin-top:6px}
+.qticks{display:flex;gap:4px;margin-bottom:10px}
+.qticks i{flex:1;height:3px;border-radius:2px;background:#e3dccd}
+.qticks i.done{background:#a9b8a3}
+.qticks i.current{background:var(--green)}
+.qcount{font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 0 18px}
+.qpage h3{font-size:clamp(2rem,6vw,2.6rem);line-height:1.12;margin:0 0 10px}
+.qsub{color:var(--muted);line-height:1.5;margin:0 0 20px}
+.qpage textarea{border:0;border-bottom:1px solid #cfc7b4;border-radius:0;background:transparent;padding:6px 0 12px;min-height:150px;resize:none;font-family:"Cormorant Garamond",Georgia,serif;font-size:1.45rem;font-weight:500;line-height:1.45;color:var(--ink)}
+.qpage textarea::placeholder{font-style:italic;color:#9a927f}
+.qpage textarea:focus{border-color:#cfc7b4;border-bottom-color:var(--green);box-shadow:none}
+.qmeter{margin:12px 0 0}
+.qmeter .bar{height:3px;background:#e3dccd;border-radius:2px}
+.qmeter .bar i{display:block;height:3px;width:0;background:var(--green);border-radius:2px;transition:width .2s}
+.qmetertext{font-size:.88rem;color:var(--muted);margin:6px 0 0;min-height:1.3em}
+.qmic{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;color:var(--muted);margin:10px 0 14px}
+.qmic svg{flex:none;margin-top:3px}
+.idea{background:none;border:0;padding:6px 0;color:var(--green);font:inherit;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.idea svg{transition:transform .2s}
+.idea[aria-expanded="true"] svg{transform:rotate(180deg)}
+.qnav{margin-top:26px}
+.qnav #next{width:100%;justify-content:center}
+.qlinks{display:flex;justify-content:space-between;margin-top:12px}
+.linkbtn{background:none;border:0;padding:10px 2px;color:var(--muted);font:inherit;font-size:.95rem;cursor:pointer}
+.linkbtn.under{text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{color:var(--ink)}
 .qcard h3{font-size:1.9rem;margin-bottom:14px}
 .qcard textarea{min-height:170px;resize:vertical}
 .counter{text-align:right;font-size:.88rem;color:var(--muted);margin-top:6px}
 .nudge{color:#8a4a12;font-size:.93rem;margin-top:8px}.nudge:empty{display:none}
-.example{font-size:.93rem;color:#5d5546;font-style:italic;margin-top:10px;border-left:3px solid #c9b896;padding-left:11px}
+.example{font-size:.97rem;color:#5d5546;font-style:italic;margin:6px 0 4px;border-left:3px solid #c9b896;padding-left:12px;line-height:1.5}
+.example[hidden]{display:none}
 .tip{font-size:.9rem;color:var(--muted);margin-top:10px}
 .hint{background:#e8ddca;padding:13px 15px;border-radius:10px;color:#4f4739;font-size:.97rem;margin-top:14px}
 .saved{font-size:.9rem;color:var(--muted);margin-top:14px}
@@ -157,9 +183,23 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
 
 <section class="panel" data-step="2" aria-labelledby="h2s"><h2 id="h2s" tabindex="-1">Faisons remonter les bons souvenirs.</h2>
   <p class="intro" id="intro2"></p>
-  <div class="meta"><div class="dots" id="dots" aria-hidden="true"></div><span class="small" id="qcount" aria-live="polite">Question 1 sur 12</span></div>
-  <div class="qcard"><h3 id="qtitle"></h3><label class="sr-only" for="answer">Votre réponse</label><textarea id="answer" maxlength="600" placeholder="Un lieu, une date, une odeur, une phrase, un détail…"></textarea><div class="counter"><span id="chars">0</span>/600</div><div class="nudge" id="nudge" aria-live="polite"></div><div class="hint" id="hint"></div><div class="example" id="example"></div><div class="tip">🎤 Sur téléphone, appuyez sur le micro de votre clavier et racontez comme à l'oral : c'est plus rapide et plus naturel.</div><div class="saved">Vos réponses sont enregistrées automatiquement dans votre navigateur.</div></div>
-  <div class="actions"><button class="btn ghost" id="prev" type="button">← Précédent</button><div class="right"><button class="btn ghost" id="skip" type="button">Passer</button><button class="btn primary" id="next" type="button">Question suivante →</button></div></div>
+  <div class="qpage">
+    <div class="qticks" id="dots" aria-hidden="true"></div>
+    <p class="qcount" id="qcount" aria-live="polite">Souvenir 1 sur 12</p>
+    <h3 id="qtitle"></h3>
+    <p class="qsub" id="hint"></p>
+    <label class="sr-only" for="answer">Votre réponse</label>
+    <textarea id="answer" maxlength="600" placeholder="Racontez ce qui s'est passé…"></textarea>
+    <div class="qmeter"><div class="bar"><i id="meterfill"></i></div><p class="qmetertext" id="nudge" aria-live="polite"></p></div>
+    <p class="qmic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4M8 23h8"/></svg><span>Astuce : le micro de votre clavier permet de raconter à voix haute, c'est plus naturel.</span></p>
+    <button class="idea" id="ideaBtn" type="button" aria-expanded="false" aria-controls="example">Besoin d'une idée ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+    <div class="example" id="example" hidden></div>
+  </div>
+  <div class="qnav">
+    <button class="btn primary" id="next" type="button">Suivant →</button>
+    <div class="qlinks"><button class="linkbtn" id="prev" type="button">← Précédent</button><button class="linkbtn under" id="skip" type="button">Passer</button></div>
+    <p class="saved">Vos réponses sont enregistrées automatiquement sur cet appareil.</p>
+  </div>
 </section>
 
 <section class="panel" data-step="3" aria-labelledby="h3s"><h2 id="h3s" tabindex="-1">Choisissez les images qui feront partie de l'histoire.</h2>
@@ -196,10 +236,10 @@ input[type=text]:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0
     </fieldset>
     <div id="textsList"></div>
     <p class="small" id="textsHint"></p>
-    <button class="btn primary" id="genTexts" type="button">✨ Écrire les textes de mon livre</button>
+    <button class="btn primary" id="genTexts" type="button">Écrire les textes de mon livre</button>
   </div>
   <div class="summary"><div class="row"><span>Le livre souvenir</span><span>29,00 €</span></div><div class="row"><span>Exemplaires</span><span class="qty"><button id="minus" type="button" aria-label="Moins d'exemplaires">−</button><b id="qty" aria-live="polite">1</b><button id="plus" type="button" aria-label="Plus d'exemplaires">+</button></span></div><div class="row"><span>Livraison</span><span>4,90 €</span></div><div class="row total"><span>Total</span><span id="total">33,90 €</span></div></div>
-  <div class="assure"><div>✏️ Modifiable</div><div>📷 Vos photos</div><div>♡ Personnalisé</div></div>
+  <div class="assure"><div>Modifiable</div><div>Vos photos</div><div>Personnalisé</div></div>
   <div class="demo-note"><strong>Version de démonstration.</strong> Le paiement n'est pas encore activé : rien ne sera facturé et aucune commande ne sera enregistrée.</div>
   <div class="actions"><button class="btn ghost" id="back5" type="button">← Modifier</button><button class="btn primary" id="order" type="button">Terminer la démo →</button></div>
 </section>
@@ -220,7 +260,7 @@ const store={
 };
 const STYLES={s1:"Doux & naturel",s2:"Élégant & intemporel",s3:"Tendre & fleuri",s4:"Photo & souvenirs"};
 const QUESTIONS=[
- {q:"Un souvenir qui vous revient tout de suite",sub:"Quand vous pensez à {name}, quel souvenir vous revient en premier ? Racontez ce qui s'est passé, même en quelques mots."},
+ {q:"Un souvenir qui vous revient tout de suite",sub:"Quand vous pensez à {name}, quel souvenir vous revient en premier ? Racontez ce qui s'est passé."},
  {q:"Un lieu important",sub:"Y a-t-il un endroit qui compte particulièrement pour {name} ? Que s'est-il passé là-bas, ou pourquoi cet endroit est-il important ?"},
  {q:"Une rencontre qui a changé quelque chose",sub:"Quelle rencontre a marqué la vie de {name} ? Racontez ce moment, ou ce que cette rencontre a changé."},
  {q:"Un moment où {il} a osé",sub:"Vous souvenez-vous d'un moment où {name} a dû choisir, oser ou recommencer quelque chose ? Qu'a-t-{il} fait ?"},
@@ -293,19 +333,22 @@ const MIN_MOTS=12;
 function nbMots(s){return (s||"").trim().split(/\s+/).filter(Boolean).length}
 function nudge(){
   const mots=nbMots(answers[q]);
-  $("nudge").textContent=mots>0&&mots<MIN_MOTS?"Encore quelques mots ("+mots+"/"+MIN_MOTS+") : où c'était, avec qui, ce qui s'est passé.":"";
+  $("meterfill").style.width=Math.min(100,Math.round(mots/MIN_MOTS*100))+"%";
+  $("nudge").textContent=mots===0?"":mots<MIN_MOTS?mots+" mot"+(mots>1?"s":"")+" sur "+MIN_MOTS+" : où c'était, avec qui, ce qui s'est passé.":mots+" mots";
 }
+function setIdea(open){$("example").hidden=!open;$("ideaBtn").setAttribute("aria-expanded",open?"true":"false")}
+$("ideaBtn").onclick=()=>setIdea($("example").hidden);
 function renderQ(){
   $("intro2").textContent=fill("Vous pouvez répondre seul ou, mieux, poser chaque question à {name} et noter ses mots. Pas besoin d'écrire un beau texte : quelques phrases suffisent (où c'était, avec qui, ce qui s'est passé). Plus vous racontez, plus le livre sera personnel.");
   $("qtitle").textContent=fill(QUESTIONS[q].q);
-  $("hint").textContent="💡 "+fill(QUESTIONS[q].sub);
-  $("example").textContent="Exemple : « "+fill(EXEMPLES[q])+" »";
-  $("answer").value=answers[q];$("chars").textContent=answers[q].length;nudge();
-  $("qcount").textContent="Question "+(q+1)+" sur "+N;
-  $("next").textContent=q===N-1?"Continuer →":"Question suivante →";
-  $("dots").innerHTML=QUESTIONS.map((_,i)=>`<i class="dot ${i===q?"current":answers[i].trim()?"done":""}"></i>`).join("");
+  $("hint").textContent=fill(QUESTIONS[q].sub);
+  $("example").textContent="« "+fill(EXEMPLES[q])+" »";setIdea(false);
+  $("answer").value=answers[q];nudge();
+  $("qcount").textContent="Souvenir "+(q+1)+" sur "+N;
+  $("next").textContent=q===N-1?"Continuer →":"Suivant →";
+  $("dots").innerHTML=QUESTIONS.map((_,i)=>`<i class="${i===q?"current":answers[i].trim()?"done":""}"></i>`).join("");
 }
-$("answer").oninput=e=>{answers[q]=e.target.value;store.set("intiqal_answers",answers);$("chars").textContent=e.target.value.length;nudge()};
+$("answer").oninput=e=>{answers[q]=e.target.value;store.set("intiqal_answers",answers);nudge()};
 function advance(){if(q<N-1){q++;renderQ();$("answer").focus({preventScroll:true})}else go(3)}
 function nextQ(){
   const mots=nbMots(answers[q]);
@@ -410,7 +453,7 @@ function renderTexts(){
   const box=$("textsList");box.textContent="";
   renderHint();
   const btn=$("genTexts");
-  if(!texts){btn.textContent="✨ Écrire les textes de mon livre";return}
+  if(!texts){btn.textContent="Écrire les textes de mon livre";return}
   btn.textContent="↻ Réécrire les textes";
   if(texts.sig!==signature()){
     const st=document.createElement("p");st.className="stale";

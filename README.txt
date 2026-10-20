@@ -16,6 +16,9 @@ Dernière mise à jour de ce fichier : 18 octobre 2026 (ajout de l'écriture des
   son prénom, le lien et ses réponses écrites (jamais les photos) sont envoyés à l'IA
   (Google Gemini, offre gratuite) via api/ecrire.js. Rien n'est enregistré sur le serveur.
   Attention : avec l'offre gratuite, Google peut réutiliser ces textes. Démo uniquement.
+- Écran des questions : style "page de livre" (question en grand, écriture sans cadre, traits
+  de progression, bouton Suivant + liens Précédent / Passer). L'exemple s'affiche au toucher
+  de "Besoin d'une idée ?". Pas d'emoji dans le parcours.
 - Questions : un exemple de réponse est affiché sous chacune ; minimum de 12 mots par réponse
   pour passer à la suivante (le bouton "Passer" permet de sauter une question).
 - Textes IA : une page par question. Deux styles au choix à l'étape 5 : "Embelli" (par défaut,
