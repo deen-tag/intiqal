@@ -263,6 +263,7 @@ body.book-open{overflow:hidden}
     <div id="textsList"></div>
     <p class="small" id="textsHint"></p>
     <button class="btn primary" id="genTexts" type="button">Écrire les textes de mon livre</button>
+    <button class="btn ghost" id="openBook2" type="button">Feuilleter mon livre</button>
   </div>
   <div class="summary"><div class="row"><span>Le livre souvenir</span><span>29,00 €</span></div><div class="row"><span>Exemplaires</span><span class="qty"><button id="minus" type="button" aria-label="Moins d'exemplaires">−</button><b id="qty" aria-live="polite">1</b><button id="plus" type="button" aria-label="Plus d'exemplaires">+</button></span></div><div class="row"><span>Livraison</span><span>4,90 €</span></div><div class="row total"><span>Total</span><span id="total">33,90 €</span></div></div>
   <div class="assure"><div>Modifiable</div><div>Vos photos</div><div>Personnalisé</div></div>
@@ -513,7 +514,7 @@ $("genTexts").onclick=async()=>{
     if(!r.ok||!data||!Array.isArray(data.pages))throw new Error((data&&data.error)||("Le serveur a répondu avec une erreur (code "+r.status+"). Réessayez dans un instant."));
     texts={intro:data.intro,pages:data.pages,fin:data.fin,sig:signature()};
     store.set("intiqal_texts",texts);
-    msg.textContent="Voilà ! Relisez et corrigez ce que vous voulez.";
+    msg.textContent="Voilà ! Relisez et corrigez ce que vous voulez, puis feuilletez votre livre.";
     renderTexts();
   }catch(e){
     msg.textContent=e&&e.message?e.message:"Une erreur est survenue. Réessayez dans un instant.";
@@ -578,6 +579,7 @@ function closeBook(){
   if(bookOpener&&bookOpener.focus)bookOpener.focus();
 }
 $("openBook").onclick=openBook;
+$("openBook2").onclick=openBook;
 $("bookClose").onclick=closeBook;
 $("bookPrev").onclick=()=>bookGo(bookCur-1);
 $("bookNext").onclick=()=>bookGo(bookCur+1);
