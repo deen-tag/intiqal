@@ -315,7 +315,12 @@ let rel=store.get("intiqal_rel","mere")||"mere";
 let gender=store.get("intiqal_gender","f")||"f";
 let answers=store.get("intiqal_answers",null);
 if(!Array.isArray(answers)||answers.length!==N)answers=Array(N).fill("");
+answers=answers.map(a=>typeof a==="string"?a.slice(0,600):"");
+if(typeof name!=="string")name="";name=name.slice(0,40);
+if(!["mere","pere","grandmere","grandpere","autre"].includes(rel))rel="mere";
+if(gender!=="m")gender="f";
 let photos=store.get("intiqal_photos",[]);if(!Array.isArray(photos))photos=[];
+photos=photos.filter(p=>typeof p==="string"&&p.startsWith("data:image/")).slice(0,10);
 let style=store.get("intiqal_style","s1");if(!STYLES[style])style="s1";
 let q=0,qty=1;
 
@@ -339,7 +344,10 @@ const EXEMPLES=[
 ];
 
 /* Navigation */
-function go(n){
+let curStep=1;
+function go(n,fromPop){
+  curStep=n;
+  if(!fromPop&&window.history&&history.pushState)history.pushState({step:n},"");
   document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
   const p=document.querySelector(`[data-step="${n}"]`);p.classList.add("active");
   const shown=Math.min(n,5);
@@ -348,6 +356,13 @@ function go(n){
   scrollTo({top:0,behavior:"smooth"});
   const h=p.querySelector("h2");if(h)h.focus({preventScroll:true});
 }
+
+if(window.history&&history.replaceState)history.replaceState({step:1},"");
+addEventListener("popstate",e=>{
+  if(!$("bookOverlay").hidden){closeBook();if(history.pushState)history.pushState({step:curStep},"");return}
+  const n=e.state&&e.state.step;
+  if(Number.isInteger(n)&&n>=1&&n<=6)go(n,true);
+});
 
 /* Étape 1 */
 function syncRel(){document.querySelectorAll('input[name="rel"]').forEach(r=>r.checked=r.value===rel);
@@ -384,7 +399,7 @@ function renderQ(){
   $("dots").innerHTML=QUESTIONS.map((_,i)=>`<i class="${i===q?"current":answers[i].trim()?"done":""}"></i>`).join("");
 }
 $("answer").oninput=e=>{answers[q]=e.target.value;store.set("intiqal_answers",answers);nudge()};
-function advance(){if(q<N-1){q++;renderQ();$("answer").focus({preventScroll:true})}else go(3)}
+function advance(){if(q<N-1){q++;renderQ();scrollTo({top:0,behavior:"smooth"});$("answer").focus({preventScroll:true})}else go(3)}
 function nextQ(){
   const mots=nbMots(answers[q]);
   if(mots>0&&mots<MIN_MOTS){
@@ -396,7 +411,7 @@ function nextQ(){
 }
 $("next").onclick=nextQ;
 $("skip").onclick=advance;
-$("prev").onclick=()=>{if(q>0){q--;renderQ()}else go(1)};
+$("prev").onclick=()=>{if(q>0){q--;renderQ();scrollTo({top:0,behavior:"smooth"})}else go(1)};
 
 /* Étape 3 : photos réduites, conservées dans le navigateur */
 const files=$("files"),photosEl=$("photos");
