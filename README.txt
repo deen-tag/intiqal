@@ -62,6 +62,9 @@ Sans clé, le bouton affiche : "L'écriture automatique n'est pas encore activé
      Une variable d'environnement ne compte que pour les déploiements faits après son ajout.
   4. Tester : intiqal.vercel.app/creer.html > répondre à quelques questions > aller jusqu'à
      l'étape 5 > "Écrire les textes de mon livre".
+Fonctionnement : les réponses sont envoyées à l'IA par paquets de 6, en parallèle (12 réponses = 2 appels
+en même temps), avec une réflexion minimale demandée ; si un modèle est lent, retiré ou surchargé, le site
+passe au suivant. Message "a mis trop de temps à répondre" = Google n'a pas répondu en ~28 s.
 Options : GEMINI_MODEL (impose un modèle ; sinon le site essaie gemini-3.8-flash, puis 3.7,
 puis 3.5), ALLOWED_ORIGINS (autres adresses autorisées).
 Note : l'erreur "404 ... no longer available to new users" veut dire que Google a retiré un
