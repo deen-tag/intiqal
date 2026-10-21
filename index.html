@@ -35,7 +35,7 @@
 
 .steps{margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .step{background:var(--paper2);border:1px solid var(--line);border-radius:22px;padding:30px 26px}
-.step-num{width:44px;height:44px;border-radius:50%;background:var(--green);color:#f8f6ef;display:grid;place-items:center;font-family:var(--serif);font-size:1.4rem;margin-bottom:16px}
+.step-num{width:44px;height:44px;border-radius:50%;background:var(--green);color:#f8f6ef;display:grid;place-items:center;font-family:var(--serif);font-size:1.4rem;font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1;margin-bottom:16px}
 .step h3{font-size:1.7rem;margin-bottom:10px}
 .step p{color:var(--muted)}
 .step-time{display:inline-block;margin-top:14px;font-size:.9rem;color:var(--green-dark);background:rgba(65,83,62,.09);border-radius:999px;padding:4px 12px}
@@ -59,6 +59,7 @@
   .steps{grid-template-columns:1fr}
   .split{grid-template-columns:1fr;gap:36px}
   .split .art{order:1}.split .copy{order:2}
+  .split-copy h2,.split-copy>p,.quote{max-width:none}
 }
 @media(max-width:560px){
   .hero{padding-top:34px}
@@ -114,7 +115,7 @@
 </div></section>
 
 <section class="section tint" id="histoire"><div class="wrap split">
-  <div class="art"><figure class="art-frame"><img src="assets/intention-flatlay.jpg" width="1400" height="933" loading="lazy" alt="Le livre souvenir entouré de photos de famille imprimées, sur un plaid en lin"></figure></div>
+  <div class="art"><figure class="art-frame"><img src="assets/intention-flatlay.jpg" width="1400" height="933" loading="lazy" alt="Le livre souvenir entouré de photos de famille imprimées, sur un plaid en lin"><figcaption>Illustration : exemple fictif</figcaption></figure></div>
   <div class="copy split-copy">
     <div class="eyebrow">L'intention</div>
     <h2>Il y a des questions qu'on remet toujours à plus tard.</h2>
